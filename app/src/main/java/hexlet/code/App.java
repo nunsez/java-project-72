@@ -9,14 +9,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.sql.SQLException;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class App {
+
     public static void main(String[] args) throws IOException, SQLException {
         final var app = getApp();
         app.start(getPort());
@@ -59,10 +61,7 @@ public class App {
     }
 
     private static void initDatabaseSchema(DataSource dataSource) throws IOException, SQLException {
-        var url = App.class.getResource("/schema.sql");
-        var path = Objects.requireNonNull(url, "schema.sql not found").getPath();
-
-        var sql = Files.readString(Path.of(path), StandardCharsets.UTF_8);
+        var sql = readResourceFile("/schema.sql");
         LOGGER.info(sql);
 
         try (
@@ -72,4 +71,18 @@ public class App {
             statement.execute(sql);
         }
     }
+
+    private static String readResourceFile(String filePath) throws IOException {
+        try (
+            var inputStream = Objects.requireNonNull(
+                App.class.getResourceAsStream(filePath),
+                "Resource not found: " + filePath
+            );
+            var inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+            var reader = new BufferedReader(inputStreamReader)
+        ) {
+            return reader.lines().collect(Collectors.joining("\n"));
+        }
+    }
+
 }
