@@ -6,6 +6,7 @@ plugins {
     application
     checkstyle
     jacoco
+    alias(libs.plugins.shadow)
 }
 
 group = "hexlet.code"
