@@ -29,6 +29,9 @@ java {
 dependencies {
     implementation(libs.javalin)
     implementation(libs.slf4j.simple)
+    implementation(libs.hikariCP)
+    implementation(libs.h2database)
+
     testImplementation(libs.junit.jupiter)
     testRuntimeOnly(libs.junit.platform.launcher)
     testImplementation(libs.assertj.core)
