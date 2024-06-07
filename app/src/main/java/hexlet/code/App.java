@@ -2,9 +2,14 @@ package hexlet.code;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import gg.jte.ContentType;
+import gg.jte.TemplateEngine;
+import gg.jte.resolve.DirectoryCodeResolver;
 import hexlet.code.util.NamedRoutes;
 import io.javalin.Javalin;
 import io.javalin.config.Key;
+import io.javalin.rendering.FileRenderer;
+import io.javalin.rendering.template.JavalinJte;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,6 +18,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.sql.SQLException;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -36,6 +42,7 @@ public class App {
             config.bundledPlugins.enableDevLogging();
             config.useVirtualThreads = true;
             config.appData(DATA_SOURCE, dataSource);
+            config.fileRenderer(buildFileRenderer());
         });
 
         app.get(NamedRoutes.rootPath(), ctx -> ctx.result("Hello World"));
@@ -83,6 +90,12 @@ public class App {
         ) {
             return reader.lines().collect(Collectors.joining("\n"));
         }
+    }
+
+    private static FileRenderer buildFileRenderer() {
+        final var codeResolver = new DirectoryCodeResolver(Path.of("src/main/jte"));
+        final var templateEngine = TemplateEngine.create(codeResolver, ContentType.Html);
+        return new JavalinJte(templateEngine);
     }
 
 }

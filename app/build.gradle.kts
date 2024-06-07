@@ -27,7 +27,8 @@ java {
 }
 
 dependencies {
-    implementation(libs.javalin)
+    implementation(libs.bundles.javalin)
+    implementation(libs.jte)
     implementation(libs.slf4j.simple)
     implementation(libs.hikariCP)
     implementation(libs.h2database)

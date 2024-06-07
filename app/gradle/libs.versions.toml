@@ -7,15 +7,21 @@ javalin = "6.1.6"
 slf4j = "2.0.13"
 hikariCP = "5.1.0"
 h2database = "2.2.224"
+jte = "3.1.12"
 
 [libraries]
 assertj-core = { group = "org.assertj", name = "assertj-core", version.ref = "assertj" }
 junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junit-jupiter" }
 junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform-launcher", version.ref = "junit-platform-launcher" }
 javalin = { group = "io.javalin", name = "javalin", version.ref = "javalin" }
+javalin-rendering = { group = "io.javalin", name = "javalin-rendering", version.ref = "javalin" }
 slf4j-simple = { group = "org.slf4j", name = "slf4j-simple", version.ref = "slf4j" }
 hikariCP = { group = "com.zaxxer", name = "HikariCP", version.ref = "hikariCP" }
 h2database = { group = "com.h2database", name = "h2", version.ref = "h2database" }
+jte = { group = "gg.jte", name = "jte", version.ref = "jte" }
 
 [plugins]
 shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
+
+[bundles]
+javalin = ["javalin", "javalin-rendering"]
