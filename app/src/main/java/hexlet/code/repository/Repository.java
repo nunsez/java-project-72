@@ -1,28 +1,32 @@
 package hexlet.code.repository;
 
 import hexlet.code.model.Entity;
-import javax.sql.DataSource;
+import org.jetbrains.annotations.NotNull;
+
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
 public interface Repository<T extends Entity> {
-    DataSource dataSource();
 
-    Optional<T> find(Long id);
+    @NotNull
+    Optional<T> find(@NotNull Long id) throws SQLException;
 
-    List<T> getEntities();
+    @NotNull
+    List<T> getEntities() throws SQLException;
 
-    void update(T entity);
+    void update(@NotNull T entity) throws SQLException;
 
-    void insert(T entity);
+    void insert(@NotNull T entity) throws SQLException;
 
-    default void save(T entity) {
-        var inDatabase = find(entity.id());
+    default void save(@NotNull T entity) throws SQLException {
+        final var id = entity.id();
 
-        if (inDatabase.isPresent()) {
+        if (id != null && find(id).isPresent()) {
             update(entity);
         } else {
             insert(entity);
         }
     }
+
 }

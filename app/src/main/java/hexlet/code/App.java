@@ -5,11 +5,14 @@ import com.zaxxer.hikari.HikariDataSource;
 import gg.jte.ContentType;
 import gg.jte.TemplateEngine;
 import gg.jte.resolve.DirectoryCodeResolver;
+import hexlet.code.controller.UrlController;
 import hexlet.code.util.NamedRoutes;
 import io.javalin.Javalin;
-import io.javalin.config.Key;
+import io.javalin.apibuilder.ApiBuilder;
+
 import io.javalin.rendering.FileRenderer;
 import io.javalin.rendering.template.JavalinJte;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,22 +33,24 @@ public class App {
         app.start(getPort());
     }
 
+    @NotNull
     private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
 
-    public static final Key<DataSource> DATA_SOURCE = new Key<>("dataSource");
+    @NotNull
+    public static final DataSource DATA_SOURCE = getDataSource();
 
+    @NotNull
     public static Javalin getApp() throws IOException, SQLException {
-        var dataSource = getDataSource();
+        final var dataSource = getDataSource();
         initDatabaseSchema(dataSource);
 
         final var app = Javalin.create(config -> {
             config.bundledPlugins.enableDevLogging();
             config.useVirtualThreads = true;
-            config.appData(DATA_SOURCE, dataSource);
             config.fileRenderer(buildFileRenderer());
         });
 
-        app.get(NamedRoutes.rootPath(), ctx -> ctx.result("Hello World"));
+        configureRoutes(app);
 
         return app;
     }
@@ -55,31 +60,35 @@ public class App {
         return Integer.parseInt(port);
     }
 
+    @NotNull
     private static DataSource getDataSource() {
         final var hikariConfig = new HikariConfig();
         hikariConfig.setJdbcUrl(getDatabaseUrl());
         return new HikariDataSource(hikariConfig);
     }
 
+    @NotNull
     private static final String DEV_DATABASE_URL = "jdbc:h2:mem:project;DB_CLOSE_DELAY=-1;";
 
+    @NotNull
     private static String getDatabaseUrl() {
         return System.getenv().getOrDefault("JDBC_DATABASE_URL", DEV_DATABASE_URL);
     }
 
-    private static void initDatabaseSchema(DataSource dataSource) throws IOException, SQLException {
-        var sql = readResourceFile("/schema.sql");
+    private static void initDatabaseSchema(@NotNull final DataSource dataSource) throws IOException, SQLException {
+        final var sql = readResourceFile("/schema.sql");
         LOGGER.info(sql);
 
         try (
             var connection = dataSource.getConnection();
-            var statement = connection.createStatement();
+            var statement = connection.createStatement()
         ) {
             statement.execute(sql);
         }
     }
 
-    private static String readResourceFile(String filePath) throws IOException {
+    @NotNull
+    private static String readResourceFile(@NotNull final String filePath) throws IOException {
         try (
             var inputStream = Objects.requireNonNull(
                 App.class.getResourceAsStream(filePath),
@@ -92,10 +101,23 @@ public class App {
         }
     }
 
+    @NotNull
     private static FileRenderer buildFileRenderer() {
         final var codeResolver = new DirectoryCodeResolver(Path.of("src/main/jte"));
         final var templateEngine = TemplateEngine.create(codeResolver, ContentType.Html);
         return new JavalinJte(templateEngine);
+    }
+
+    private static void configureRoutes(@NotNull final Javalin app) {
+        app.before(context -> context.contentType("text/plain;charset=utf-8"));
+
+        app.get(NamedRoutes.rootPath(), context -> context.render("index.jte"));
+
+        final var config = app.unsafeConfig();
+
+        config.router.apiBuilder(() -> {
+            ApiBuilder.crud(NamedRoutes.urlPath("{id}"), new UrlController());
+        });
     }
 
 }
