@@ -63,16 +63,15 @@ public class App {
     @NotNull
     private static DataSource getDataSource() {
         final var hikariConfig = new HikariConfig();
-        hikariConfig.setJdbcUrl(getDatabaseUrl());
+
+        // h2database by default
+        final var driver = System.getenv().getOrDefault("JDBC_DRIVER", "org.h2.Driver");
+        final var jdbcUrl = System.getenv().getOrDefault("JDBC_DATABASE_URL", "jdbc:h2:mem:project;DB_CLOSE_DELAY=-1;");
+
+        hikariConfig.setDriverClassName(driver);
+        hikariConfig.setJdbcUrl(jdbcUrl);
+
         return new HikariDataSource(hikariConfig);
-    }
-
-    @NotNull
-    private static final String DEV_DATABASE_URL = "jdbc:h2:mem:project;DB_CLOSE_DELAY=-1;";
-
-    @NotNull
-    private static String getDatabaseUrl() {
-        return System.getenv().getOrDefault("JDBC_DATABASE_URL", DEV_DATABASE_URL);
     }
 
     private static void initDatabaseSchema(@NotNull final DataSource dataSource) throws IOException, SQLException {

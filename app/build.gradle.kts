@@ -32,6 +32,7 @@ dependencies {
     implementation(libs.slf4j.simple)
     implementation(libs.hikariCP)
     implementation(libs.h2database)
+    implementation(libs.postgresql)
 
     testImplementation(libs.junit.jupiter)
     testRuntimeOnly(libs.junit.platform.launcher)

@@ -7,6 +7,7 @@ javalin = "6.1.6"
 slf4j = "2.0.13"
 hikariCP = "5.1.0"
 h2database = "2.2.224"
+postgresql = "42.7.3"
 jte = "3.1.12"
 
 [libraries]
@@ -18,6 +19,7 @@ javalin-rendering = { group = "io.javalin", name = "javalin-rendering", version.
 slf4j-simple = { group = "org.slf4j", name = "slf4j-simple", version.ref = "slf4j" }
 hikariCP = { group = "com.zaxxer", name = "HikariCP", version.ref = "hikariCP" }
 h2database = { group = "com.h2database", name = "h2", version.ref = "h2database" }
+postgresql = { group = "org.postgresql", name = "postgresql", version.ref = "postgresql" }
 jte = { group = "gg.jte", name = "jte", version.ref = "jte" }
 
 [plugins]
