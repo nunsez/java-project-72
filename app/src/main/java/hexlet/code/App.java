@@ -28,6 +28,8 @@ import java.util.stream.Collectors;
 
 public class App {
 
+    public static final String JAVA_ENV = System.getenv().getOrDefault("JAVA_ENV", "dev");
+
     public static void main(String[] args) throws IOException, SQLException {
         final var app = getApp();
         app.start(getPort());
@@ -102,8 +104,15 @@ public class App {
 
     @NotNull
     private static FileRenderer buildFileRenderer() {
-        final var codeResolver = new DirectoryCodeResolver(Path.of("src/main/jte"));
-        final var templateEngine = TemplateEngine.create(codeResolver, ContentType.Html);
+        final TemplateEngine templateEngine;
+
+        if (JAVA_ENV.equals("dev")) {
+            final var codeResolver = new DirectoryCodeResolver(Path.of("src", "main", "jte"));
+            templateEngine = TemplateEngine.create(codeResolver, ContentType.Html);
+        } else {
+            templateEngine = TemplateEngine.createPrecompiled(ContentType.Html);
+        }
+
         return new JavalinJte(templateEngine);
     }
 

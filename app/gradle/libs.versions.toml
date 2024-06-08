@@ -24,6 +24,7 @@ jte = { group = "gg.jte", name = "jte", version.ref = "jte" }
 
 [plugins]
 shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
+jte = { id = "gg.jte.gradle", version.ref = "jte" }
 
 [bundles]
 javalin = ["javalin", "javalin-rendering"]

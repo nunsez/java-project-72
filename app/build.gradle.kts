@@ -6,7 +6,7 @@ plugins {
     application
     checkstyle
     jacoco
-    alias(libs.plugins.shadow)
+    alias(libs.plugins.jte)
 }
 
 group = "hexlet.code"
@@ -24,6 +24,11 @@ java {
     toolchain {
         version = JavaLanguageVersion.of(21)
     }
+}
+
+jte {
+    binaryStaticContent = true
+    generate()
 }
 
 dependencies {
@@ -45,6 +50,14 @@ tasks {
     withType<JavaExec>().configureEach { defaultCharacterEncoding = "UTF-8" }
     withType<Javadoc>().configureEach { options.encoding = "UTF-8" }
     withType<Test>().configureEach { defaultCharacterEncoding = "UTF-8" }
+}
+
+tasks.jar {
+    dependsOn(tasks.precompileJte)
+    from(fileTree("build/generated-sources/jte")) {
+        include("**/*.class")
+        include("**/*.bin")
+    }
 }
 
 tasks.test {
