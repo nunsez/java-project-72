@@ -16,6 +16,7 @@ junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.r
 junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform-launcher", version.ref = "junit-platform-launcher" }
 javalin = { group = "io.javalin", name = "javalin", version.ref = "javalin" }
 javalin-rendering = { group = "io.javalin", name = "javalin-rendering", version.ref = "javalin" }
+javalin-testtools = { group = "io.javalin", name = "javalin-testtools", version.ref = "javalin" }
 slf4j-simple = { group = "org.slf4j", name = "slf4j-simple", version.ref = "slf4j" }
 hikariCP = { group = "com.zaxxer", name = "HikariCP", version.ref = "hikariCP" }
 h2database = { group = "com.h2database", name = "h2", version.ref = "h2database" }
@@ -27,4 +28,4 @@ shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
 jte = { id = "gg.jte.gradle", version.ref = "jte" }
 
 [bundles]
-javalin = ["javalin", "javalin-rendering"]
+javalin = ["javalin", "javalin-rendering", "javalin-testtools"]

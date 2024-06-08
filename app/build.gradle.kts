@@ -65,7 +65,7 @@ tasks.test {
 
     testLogging {
         exceptionFormat = TestExceptionFormat.FULL
-        events(TestLogEvent.FAILED, TestLogEvent.PASSED, TestLogEvent.SKIPPED)
+        events(TestLogEvent.FAILED, TestLogEvent.SKIPPED)
         showStandardStreams = true
     }
 }
@@ -78,4 +78,13 @@ tasks.jacocoTestReport {
         html.required = true
         csv.required = false
     }
+
+    val coverageDirs = classDirectories.files.flatMap { dir ->
+        val tree = fileTree(dir)
+        tree.exclude("**/gg/jte/generated/*")
+        tree
+    }
+
+    classDirectories.setFrom(coverageDirs)
+
 }
