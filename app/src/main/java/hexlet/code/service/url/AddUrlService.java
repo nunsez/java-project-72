@@ -33,14 +33,14 @@ public final class AddUrlService implements Function<String, Result<Url, String>
     @NotNull
     private Result<String, String> checkMalformed(@Nullable final String rawUrl) {
         if (rawUrl == null) {
-            return Result.error("Некорректный адрес");
+            return Result.error("Некорректный URL");
         }
 
         try {
-            final var url = URI.create(rawUrl).toURL();
+            final var url = URI.create(rawUrl.strip()).toURL();
             return Result.ok(fromURL(url));
         } catch (IllegalArgumentException | MalformedURLException e) {
-            return Result.error("Некорректный адрес");
+            return Result.error("Некорректный URL");
         }
     }
 
@@ -62,7 +62,7 @@ public final class AddUrlService implements Function<String, Result<Url, String>
 
     @NotNull
     private Result<String, String> checkExists(@NotNull final String name) {
-        Optional<Url> url;
+        final Optional<Url> url;
 
         try {
             url = urlRepository.findByName(name);
@@ -84,7 +84,7 @@ public final class AddUrlService implements Function<String, Result<Url, String>
         try {
             urlRepository.save(url);
         } catch (SQLException e) {
-            return Result.error("Ошибка при добавлении страницы");
+            return Result.error("Ошибка при добавлении URL");
         }
 
         return Result.ok(url);

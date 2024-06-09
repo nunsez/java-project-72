@@ -9,6 +9,8 @@ hikariCP = "5.1.0"
 h2database = "2.2.224"
 postgresql = "42.7.3"
 jte = "3.1.12"
+unirest = "4.4.0"
+jsoup = "1.17.2"
 
 [libraries]
 assertj-core = { group = "org.assertj", name = "assertj-core", version.ref = "assertj" }
@@ -22,6 +24,8 @@ hikariCP = { group = "com.zaxxer", name = "HikariCP", version.ref = "hikariCP" }
 h2database = { group = "com.h2database", name = "h2", version.ref = "h2database" }
 postgresql = { group = "org.postgresql", name = "postgresql", version.ref = "postgresql" }
 jte = { group = "gg.jte", name = "jte", version.ref = "jte" }
+unirest-java-core = { group = "com.konghq", name = "unirest-java-core", version.ref = "unirest" }
+jsoup = { group = "org.jsoup", name = "jsoup", version.ref = "jsoup"}
 
 [plugins]
 shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
@@ -29,3 +33,4 @@ jte = { id = "gg.jte.gradle", version.ref = "jte" }
 
 [bundles]
 javalin = ["javalin", "javalin-rendering", "javalin-testtools"]
+unirest = ["unirest-java-core"]

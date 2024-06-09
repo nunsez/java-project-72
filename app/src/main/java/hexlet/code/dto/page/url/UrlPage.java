@@ -2,19 +2,33 @@ package hexlet.code.dto.page.url;
 
 import hexlet.code.dto.page.Page;
 import hexlet.code.model.Url;
+import hexlet.code.model.UrlCheck;
+import hexlet.code.util.HttpFlash;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public final class UrlPage implements Page {
 
     @NotNull
     private final Url url;
 
+    @NotNull
+    private final List<UrlCheck> urlChecks;
+
     @Nullable
-    private String flash;
+    private HttpFlash flash;
 
     public UrlPage(@NotNull final Url url) {
+        this(url, new ArrayList<>());
+    }
+
+    public UrlPage(@NotNull final Url url, @Nullable final List<UrlCheck> urlChecks) {
         this.url = url;
+        this.urlChecks = Objects.requireNonNullElse(urlChecks, new ArrayList<>());
     }
 
     @NotNull
@@ -22,13 +36,19 @@ public final class UrlPage implements Page {
         return url;
     }
 
+    @NotNull
+    public List<UrlCheck> urlChecks() {
+        return urlChecks;
+    }
+
+    @Nullable
     @Override
-    public String flash() {
+    public HttpFlash flash() {
         return flash;
     }
 
     @Override
-    public void setFlash(@Nullable final String flash) {
+    public void setFlash(@Nullable final HttpFlash flash) {
         this.flash = flash;
     }
 

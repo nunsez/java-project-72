@@ -35,8 +35,8 @@ public final class UrlRepository implements Repository<Url> {
             final var resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
-                final var url = Url.fromResultSet(resultSet);
-                return Optional.of(url);
+                final var entity = Url.fromResultSet(resultSet);
+                return Optional.of(entity);
             }
 
             return Optional.empty();
@@ -53,20 +53,20 @@ public final class UrlRepository implements Repository<Url> {
             final var sql = "SELECT * from %s".formatted(TABLE_NAME);
             statement.executeQuery(sql);
             final var resultSet = statement.getResultSet();
-            final var urls = new ArrayList<Url>();
+            final var entities = new ArrayList<Url>();
 
             while (resultSet.next()) {
-                final var url = Url.fromResultSet(resultSet);
-                urls.add(url);
+                final var entity = Url.fromResultSet(resultSet);
+                entities.add(entity);
             }
 
-            return urls;
+            return entities;
         }
     }
 
     @Override
     public void update(@NotNull final Url entity) throws SQLException {
-
+        throw new RuntimeException("Not implemented");
     }
 
     @Override
@@ -110,18 +110,18 @@ public final class UrlRepository implements Repository<Url> {
         }
     }
 
-    private void syncEntity(@NotNull final Long id, @NotNull final Url entity) throws SQLException {
-        final var urlOptional = find(id);
+    private void syncEntity(@NotNull final Long id, @NotNull final Url url) throws SQLException {
+        final var entityOptional = find(id);
 
-        if (urlOptional.isEmpty()) {
+        if (entityOptional.isEmpty()) {
             return;
         }
 
-        final var url = urlOptional.get();
+        final var entity = entityOptional.get();
 
-        entity.setId(Objects.requireNonNull(url.id()));
-        entity.setName(url.name());
-        entity.setInsertedAt(url.insertedAt());
+        url.setId(Objects.requireNonNull(entity.id()));
+        url.setName(entity.name());
+        url.setInsertedAt(entity.insertedAt());
     }
 
 }

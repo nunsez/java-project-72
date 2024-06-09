@@ -38,6 +38,8 @@ dependencies {
     implementation(libs.hikariCP)
     implementation(libs.h2database)
     implementation(libs.postgresql)
+    implementation(libs.bundles.unirest)
+    implementation(libs.jsoup)
 
     testImplementation(libs.junit.jupiter)
     testRuntimeOnly(libs.junit.platform.launcher)

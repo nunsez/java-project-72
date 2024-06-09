@@ -5,10 +5,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import gg.jte.ContentType;
 import gg.jte.TemplateEngine;
 import gg.jte.resolve.DirectoryCodeResolver;
-import hexlet.code.controller.UrlController;
-import hexlet.code.util.NamedRoutes;
 import io.javalin.Javalin;
-import io.javalin.apibuilder.ApiBuilder;
 
 import io.javalin.rendering.FileRenderer;
 import io.javalin.rendering.template.JavalinJte;
@@ -52,7 +49,7 @@ public class App {
             config.fileRenderer(buildFileRenderer());
         });
 
-        configureRoutes(app);
+        RoutesBuilder.apply(app);
 
         return app;
     }
@@ -114,18 +111,6 @@ public class App {
         }
 
         return new JavalinJte(templateEngine);
-    }
-
-    private static void configureRoutes(@NotNull final Javalin app) {
-        app.before(context -> context.contentType("text/plain;charset=utf-8"));
-
-        app.get(NamedRoutes.rootPath(), context -> context.render("index.jte"));
-
-        final var config = app.unsafeConfig();
-
-        config.router.apiBuilder(() -> {
-            ApiBuilder.crud(NamedRoutes.urlPath("{id}"), new UrlController());
-        });
     }
 
 }

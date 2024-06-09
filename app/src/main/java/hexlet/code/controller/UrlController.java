@@ -6,81 +6,95 @@ import hexlet.code.App;
 import hexlet.code.dto.page.url.UrlPage;
 import hexlet.code.dto.page.url.UrlsPage;
 import hexlet.code.model.Url;
+import hexlet.code.model.UrlCheck;
+import hexlet.code.repository.UrlCheckRepository;
 import hexlet.code.repository.UrlRepository;
 import hexlet.code.service.url.AddUrlService;
+import hexlet.code.util.HttpFlash;
 import hexlet.code.util.NamedRoutes;
-import io.javalin.apibuilder.CrudHandler;
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
-public final class UrlController implements CrudHandler {
+public final class UrlController {
 
-    private final UrlRepository urlRepository = new UrlRepository(App.DATA_SOURCE);
+    @NotNull
+    public static final String URL_PARAM = "id";
 
-    @Override
-    public void create(@NotNull final Context context) {
+    @NotNull
+    private static final UrlRepository URL_REPOSITORY = new UrlRepository(App.DATA_SOURCE);
+
+    @NotNull
+    private static final UrlCheckRepository URL_CHECK_REPOSITORY = new UrlCheckRepository(App.DATA_SOURCE);
+
+    @NotNull
+    private static final String NOT_FOUND_MESSAGE = "Страница с идентификатором %s не найдена";
+
+    public static void create(@NotNull final Context context) {
         final var rawUrl = context.formParam("url");
-        final var result = new AddUrlService(urlRepository).apply(rawUrl);
+        final var result = new AddUrlService(URL_REPOSITORY).apply(rawUrl);
 
         result.ifOkOrElse(
-            (url) -> context.sessionAttribute("flash", "Страница успешно добавлена"),
-            (error) -> context.sessionAttribute("flash", error)
+            (url) -> HttpFlash.success("Страница успешно добавлена").saveToSession(context),
+            (error) -> HttpFlash.error(error).saveToSession(context)
         );
 
         context.redirect(NamedRoutes.urlsPath());
     }
 
-    @Override
-    public void getAll(@NotNull final Context context) {
+    public static void getAll(@NotNull final Context context) {
         List<Url> urls;
 
         try {
-            urls = urlRepository.getEntities();
+            urls = URL_REPOSITORY.getEntities();
         } catch (SQLException e) {
             urls = List.of();
         }
 
-        final var flash = context.<String>consumeSessionAttribute("flash");
-        final var page = new UrlsPage(urls);
+        Map<Long, UrlCheck> lastChecks;
+
+        try {
+            var urlIds = urls.stream().map(Url::id).toList();
+            lastChecks = URL_CHECK_REPOSITORY.findLastChecksByUrlIds(urlIds);
+        } catch (SQLException e) {
+            lastChecks = Map.of();
+        }
+
+        final var page = new UrlsPage(urls, lastChecks);
+        final var flash = context.<HttpFlash>attribute(HttpFlash.FLASH);
         page.setFlash(flash);
 
         context.render("url/index.jte", model("page", page));
     }
 
-    @Override
-    public void getOne(@NotNull final Context context, @NotNull final String resourceId) {
+    public static void getOne(@NotNull final Context context) {
+        final var id = context.pathParamAsClass(URL_PARAM, Long.class).get();
         Url url;
 
         try {
-            url = urlRepository.find(Long.parseLong(resourceId))
-                .orElseThrow(() -> buildNotFoundResponse(resourceId));
+            url = URL_REPOSITORY.find(id)
+                .orElseThrow(() -> new NotFoundResponse(NOT_FOUND_MESSAGE.formatted(id)));
         } catch (SQLException e) {
-            throw buildNotFoundResponse(resourceId);
+            throw new NotFoundResponse(NOT_FOUND_MESSAGE.formatted(id));
         }
 
-        final var page = new UrlPage(url);
+        List<UrlCheck> urlChecks;
+
+        try {
+            urlChecks = URL_CHECK_REPOSITORY.findChecksByUrlId(id);
+        } catch (SQLException e) {
+            urlChecks = List.of();
+        }
+
+        final var page = new UrlPage(url, urlChecks);
+        final var flash = context.<HttpFlash>attribute(HttpFlash.FLASH);
+        page.setFlash(flash);
 
         context.render("url/show.jte", model("page", page));
-    }
-
-    @Override
-    public void update(@NotNull final Context context, @NotNull final String resourceId) {
-
-    }
-
-    @Override
-    public void delete(@NotNull final Context context, @NotNull final String resourceId) {
-
-    }
-
-    @NotNull
-    private NotFoundResponse buildNotFoundResponse(@NotNull final String resourceId) {
-        final var notFoundMessage = "Страница с идентификатором " + resourceId + " не найдена";
-        return new NotFoundResponse(notFoundMessage);
     }
 
 }

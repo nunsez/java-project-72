@@ -2,35 +2,52 @@ package hexlet.code.dto.page.url;
 
 import hexlet.code.dto.page.Page;
 import hexlet.code.model.Url;
+import hexlet.code.model.UrlCheck;
+import hexlet.code.util.HttpFlash;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Map;
 
 public final class UrlsPage implements Page {
 
     @NotNull
     private final List<Url> urls;
 
+    @NotNull
+    private final Map<Long, UrlCheck> lastChecks;
+
     @Nullable
-    private String flash;
+    private HttpFlash flash;
+
+    public UrlsPage(@NotNull final List<Url> urls, @NotNull final Map<Long, UrlCheck> lastChecks) {
+        this.urls = urls;
+        this.lastChecks = lastChecks;
+    }
 
     public UrlsPage(@NotNull final List<Url> urls) {
-        this.urls = urls;
-    }
-
-    @Override
-    public String flash() {
-        return flash;
-    }
-
-    @Override
-    public void setFlash(@Nullable final String flash) {
-        this.flash = flash;
+        this(urls, Map.of());
     }
 
     public List<Url> urls() {
         return urls;
+    }
+
+    @Nullable
+    public UrlCheck lastCheckForUrl(@NotNull final Url url) {
+        return lastChecks.get(url.id());
+    }
+
+    @Nullable
+    @Override
+    public HttpFlash flash() {
+        return flash;
+    }
+
+    @Override
+    public void setFlash(@Nullable final HttpFlash flash) {
+        this.flash = flash;
     }
 
 }
