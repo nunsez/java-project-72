@@ -2,7 +2,7 @@ package hexlet.code.service.url;
 
 import hexlet.code.model.Url;
 import hexlet.code.repository.UrlRepository;
-import hexlet.code.util.Result;
+import hexlet.code.service.ServiceException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -11,9 +11,8 @@ import java.net.URI;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.Optional;
-import java.util.function.Function;
 
-public final class AddUrlService implements Function<String, Result<Url, String>> {
+public final class AddUrlService {
 
     @NotNull
     private final UrlRepository urlRepository;
@@ -23,24 +22,31 @@ public final class AddUrlService implements Function<String, Result<Url, String>
     }
 
     @NotNull
-    @Override
-    public Result<Url, String> apply(@Nullable String rawUrl) {
-        return checkMalformed(rawUrl)
-            .flatMap(this::checkExists)
-            .flatMap(this::save);
+    public Url call(@Nullable String rawUrl) throws ServiceException {
+        var urlName = checkMalformed(rawUrl);
+        checkExists(urlName);
+        var url = new Url(urlName);
+
+        try {
+            urlRepository.save(url);
+        } catch (SQLException e) {
+            throw new ServiceException("Ошибка при добавлении URL");
+        }
+
+        return url;
     }
 
     @NotNull
-    private Result<String, String> checkMalformed(@Nullable String rawUrl) {
+    private String checkMalformed(@Nullable String rawUrl) throws ServiceException {
         if (rawUrl == null) {
-            return Result.error("Некорректный URL");
+            throw new ServiceException("Некорректный URL");
         }
 
         try {
             var url = URI.create(rawUrl.strip()).toURL();
-            return Result.ok(fromURL(url));
+            return fromURL(url);
         } catch (IllegalArgumentException | MalformedURLException e) {
-            return Result.error("Некорректный URL");
+            throw new ServiceException("Некорректный URL");
         }
     }
 
@@ -60,34 +66,18 @@ public final class AddUrlService implements Function<String, Result<Url, String>
         return builder.toString();
     }
 
-    @NotNull
-    private Result<String, String> checkExists(@NotNull String name) {
+    private void checkExists(@NotNull String name) throws ServiceException {
         Optional<Url> url;
 
         try {
             url = urlRepository.findByName(name);
         } catch (SQLException e) {
-            return Result.error("Ошибка запроса данных");
+            throw new ServiceException("Ошибка запроса данных");
         }
 
         if (url.isPresent()) {
-            return Result.error("Страница уже существует");
+            throw new ServiceException("Страница уже существует");
         }
-
-        return Result.ok(name);
-    }
-
-    @NotNull
-    private Result<Url, String> save(@NotNull String name) {
-        var url = new Url(name);
-
-        try {
-            urlRepository.save(url);
-        } catch (SQLException e) {
-            return Result.error("Ошибка при добавлении URL");
-        }
-
-        return Result.ok(url);
     }
 
 }

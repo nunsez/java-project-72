@@ -9,6 +9,7 @@ import hexlet.code.model.Url;
 import hexlet.code.model.UrlCheck;
 import hexlet.code.repository.UrlCheckRepository;
 import hexlet.code.repository.UrlRepository;
+import hexlet.code.service.ServiceException;
 import hexlet.code.service.url.AddUrlService;
 import hexlet.code.util.HttpFlash;
 import hexlet.code.util.NamedRoutes;
@@ -35,12 +36,14 @@ public final class UrlController {
 
     public static void create(@NotNull Context context) {
         var rawUrl = context.formParam("url");
-        var result = new AddUrlService(URL_REPOSITORY).apply(rawUrl);
+        var service = new AddUrlService(URL_REPOSITORY);
 
-        result.ifOkOrElse(
-            (url) -> HttpFlash.success("Страница успешно добавлена").saveToSession(context),
-            (error) -> HttpFlash.danger(error).saveToSession(context)
-        );
+        try {
+            service.call(rawUrl);
+            HttpFlash.success("Страница успешно добавлена").saveToSession(context);
+        } catch (ServiceException e) {
+            HttpFlash.danger(e.getMessage()).saveToSession(context);
+        }
 
         context.redirect(NamedRoutes.urlsPath());
     }
