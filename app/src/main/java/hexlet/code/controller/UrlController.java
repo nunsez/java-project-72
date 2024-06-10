@@ -33,9 +33,9 @@ public final class UrlController {
     @NotNull
     private static final String NOT_FOUND_MESSAGE = "Страница с идентификатором %s не найдена";
 
-    public static void create(@NotNull final Context context) {
-        final var rawUrl = context.formParam("url");
-        final var result = new AddUrlService(URL_REPOSITORY).apply(rawUrl);
+    public static void create(@NotNull Context context) {
+        var rawUrl = context.formParam("url");
+        var result = new AddUrlService(URL_REPOSITORY).apply(rawUrl);
 
         result.ifOkOrElse(
             (url) -> HttpFlash.success("Страница успешно добавлена").saveToSession(context),
@@ -45,7 +45,7 @@ public final class UrlController {
         context.redirect(NamedRoutes.urlsPath());
     }
 
-    public static void getAll(@NotNull final Context context) throws SQLException {
+    public static void getAll(@NotNull Context context) throws SQLException {
         var urls = URL_REPOSITORY.getEntities().stream()
             .sorted(Comparator.nullsLast(Comparator.comparing(Url::id).reversed()))
             .toList();
@@ -53,15 +53,15 @@ public final class UrlController {
         var urlIds = urls.stream().map(Url::id).toList();
         var lastChecks = URL_CHECK_REPOSITORY.findLastChecksByUrlIds(urlIds);
 
-        final var page = new UrlsPage(urls, lastChecks);
-        final var flash = context.<HttpFlash>attribute(HttpFlash.FLASH);
+        var page = new UrlsPage(urls, lastChecks);
+        var flash = context.<HttpFlash>attribute(HttpFlash.FLASH);
         page.setFlash(flash);
 
         context.render("url/index.jte", model("page", page));
     }
 
-    public static void getOne(@NotNull final Context context) throws SQLException {
-        final var id = context.pathParamAsClass(URL_PARAM, Long.class).get();
+    public static void getOne(@NotNull Context context) throws SQLException {
+        var id = context.pathParamAsClass(URL_PARAM, Long.class).get();
 
         var url = URL_REPOSITORY.find(id)
             .orElseThrow(() -> new NotFoundResponse(NOT_FOUND_MESSAGE.formatted(id)));
@@ -70,8 +70,8 @@ public final class UrlController {
             .sorted(Comparator.nullsLast(Comparator.comparing(UrlCheck::insertedAt).reversed()))
             .toList();
 
-        final var page = new UrlPage(url, urlChecks);
-        final var flash = context.<HttpFlash>attribute(HttpFlash.FLASH);
+        var page = new UrlPage(url, urlChecks);
+        var flash = context.<HttpFlash>attribute(HttpFlash.FLASH);
         page.setFlash(flash);
 
         context.render("url/show.jte", model("page", page));

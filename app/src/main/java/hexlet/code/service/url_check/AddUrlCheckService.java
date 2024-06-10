@@ -25,15 +25,15 @@ public final class AddUrlCheckService implements Function<Long, Result<UrlCheck,
     private final UrlCheckRepository urlCheckRepository;
 
     public AddUrlCheckService(
-        @NotNull final UrlRepository urlRepository,
-        @NotNull final UrlCheckRepository urlCheckRepository
+        @NotNull UrlRepository urlRepository,
+        @NotNull UrlCheckRepository urlCheckRepository
     ) {
         this.urlRepository = urlRepository;
         this.urlCheckRepository = urlCheckRepository;
     }
 
-    public Result<UrlCheck, String> apply(@NotNull final Long urlId) {
-        final var statusCode = new AtomicReference<Integer>();
+    public Result<UrlCheck, String> apply(@NotNull Long urlId) {
+        var statusCode = new AtomicReference<Integer>();
 
         return getUrl(urlId)
             .flatMap(this::getResponse)
@@ -45,8 +45,8 @@ public final class AddUrlCheckService implements Function<Long, Result<UrlCheck,
             .flatMap(this::save);
     }
 
-    private Result<Url, String> getUrl(@NotNull final Long id) {
-        final Optional<Url> url;
+    private Result<Url, String> getUrl(@NotNull Long id) {
+        Optional<Url> url;
 
         try {
             url = urlRepository.find(id);
@@ -59,18 +59,18 @@ public final class AddUrlCheckService implements Function<Long, Result<UrlCheck,
     }
 
     private Result<HttpResponse<String>, String> getResponse(Url url) {
-        final var response = Unirest.get(url.name()).asString();
+        var response = Unirest.get(url.name()).asString();
         return Result.ok(response);
     }
 
     private Result<Document, String> parseDoc(HttpResponse<String> response) {
-        final var doc = Jsoup.parse(response.getBody());
+        var doc = Jsoup.parse(response.getBody());
         return Result.ok(doc);
     }
 
     private UrlCheck buildUrlCheck(Long urlId, Integer statusCode, Document doc) {
-        final var h1Node = doc.select("h1").first();
-        final var descriptionNode = doc.select("head meta[name='description']").first();
+        var h1Node = doc.select("h1").first();
+        var descriptionNode = doc.select("head meta[name='description']").first();
 
         return new UrlCheck(
             statusCode,
@@ -81,7 +81,7 @@ public final class AddUrlCheckService implements Function<Long, Result<UrlCheck,
         );
     }
 
-    private Result<UrlCheck, String> save(@NotNull final UrlCheck urlCheck) {
+    private Result<UrlCheck, String> save(@NotNull UrlCheck urlCheck) {
         try {
             urlCheckRepository.save(urlCheck);
         } catch (SQLException e) {

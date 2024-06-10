@@ -20,9 +20,9 @@ public final class UrlCheckController {
     @NotNull
     private static final UrlCheckRepository URL_CHECK_REPOSITORY = new UrlCheckRepository(App.DATA_SOURCE);
 
-    public static void create(@NotNull final Context context) {
-        final var urlId = context.pathParamAsClass(URL_PARAM, Long.class).get();
-        final var result = new AddUrlCheckService(URL_REPOSITORY, URL_CHECK_REPOSITORY).apply(urlId);
+    public static void create(@NotNull Context context) {
+        var urlId = context.pathParamAsClass(URL_PARAM, Long.class).get();
+        var result = new AddUrlCheckService(URL_REPOSITORY, URL_CHECK_REPOSITORY).apply(urlId);
 
         result.ifOkOrElse(
             (urlCheck) -> HttpFlash.success("Страница успешно проверена").saveToSession(context),

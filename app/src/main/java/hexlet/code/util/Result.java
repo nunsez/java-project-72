@@ -15,18 +15,18 @@ public final class Result<T, E> {
     @Nullable
     private final E error;
 
-    private Result(@Nullable final T data, @Nullable final E error) {
+    private Result(@Nullable T data, @Nullable E error) {
         this.data = data;
         this.error = error;
     }
 
     @NotNull
-    public static <T, E> Result<T, E> ok(@NotNull final T data) {
+    public static <T, E> Result<T, E> ok(@NotNull T data) {
         return new Result<>(data, null);
     }
 
     @NotNull
-    public static <T, E> Result<T, E> error(@NotNull final E error) {
+    public static <T, E> Result<T, E> error(@NotNull E error) {
         return new Result<>(null, error);
     }
 
@@ -49,10 +49,10 @@ public final class Result<T, E> {
     }
 
     @NotNull
-    public <U> Result<U, E> map(@NotNull final Function<? super T, ? extends U> mapper) {
+    public <U> Result<U, E> map(@NotNull Function<? super T, ? extends U> mapper) {
         Objects.requireNonNull(mapper);
         if (isOk()) {
-            final var newData = mapper.apply(data());
+            var newData = mapper.apply(data());
             return Result.ok(Objects.requireNonNull(newData));
         } else {
             return Result.error(error());
@@ -60,7 +60,7 @@ public final class Result<T, E> {
     }
 
     @NotNull
-    public <U> Result<U, E> flatMap(@NotNull final Function<? super T, ? extends Result<U, E>> mapper) {
+    public <U> Result<U, E> flatMap(@NotNull Function<? super T, ? extends Result<U, E>> mapper) {
         Objects.requireNonNull(mapper);
         if (isOk()) {
             var newResult = Objects.requireNonNull(mapper.apply(data()));
@@ -78,8 +78,8 @@ public final class Result<T, E> {
     }
 
     public void ifOkOrElse(
-        @NotNull final Consumer<? super T> okAction,
-        @NotNull final Consumer<? super E> errorAction
+        @NotNull Consumer<? super T> okAction,
+        @NotNull Consumer<? super E> errorAction
     ) {
         if (isOk()) {
             okAction.accept(data());

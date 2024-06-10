@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class RoutesBuilder {
 
-    public static void apply(@NotNull final Javalin app) {
+    public static void apply(@NotNull Javalin app) {
         app.before(context -> context.contentType("text/plain;charset=utf-8"));
 
         handleFlash(app);
@@ -23,9 +23,9 @@ public class RoutesBuilder {
         app.post(NamedRoutes.urlChecksPath(pattern(UrlCheckController.URL_PARAM)), UrlCheckController::create);
     }
 
-    private static void handleFlash(@NotNull final Javalin app) {
+    private static void handleFlash(@NotNull Javalin app) {
         app.before(context -> {
-            final var flash = HttpFlash.consumeFromSession(context);
+            var flash = HttpFlash.consumeFromSession(context);
 
             if (flash != null) {
                 context.attribute(HttpFlash.FLASH, flash);
@@ -33,7 +33,7 @@ public class RoutesBuilder {
         });
     }
 
-    private static String pattern(@NotNull final String param) {
+    private static String pattern(@NotNull String param) {
         return "{" + param + "}";
     }
 

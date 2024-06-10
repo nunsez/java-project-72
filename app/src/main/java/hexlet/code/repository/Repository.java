@@ -20,7 +20,7 @@ public interface Repository<T extends Entity> {
     void insert(@NotNull T entity) throws SQLException;
 
     default void save(@NotNull T entity) throws SQLException {
-        final var id = entity.id();
+        var id = entity.id();
 
         if (id != null && find(id).isPresent()) {
             update(entity);

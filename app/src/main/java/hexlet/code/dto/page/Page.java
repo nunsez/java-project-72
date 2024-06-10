@@ -20,7 +20,7 @@ public interface Page {
             return "";
         }
 
-        final var formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        var formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");
         return formatter.format(timestamp);
     }
 

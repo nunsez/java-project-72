@@ -26,18 +26,18 @@ public final class UrlCheckRepository implements Repository<UrlCheck> {
 
     @NotNull
     @Override
-    public Optional<UrlCheck> find(@NotNull final Long id) throws SQLException {
-        final var sql = "SELECT * FROM %s WHERE id = ?".formatted(TABLE_NAME);
+    public Optional<UrlCheck> find(@NotNull Long id) throws SQLException {
+        var sql = "SELECT * FROM %s WHERE id = ?".formatted(TABLE_NAME);
 
         try (
             var connection = dataSource.getConnection();
             var statement = connection.prepareStatement(sql)
         ) {
             statement.setLong(1, id);
-            final var resultSet = statement.executeQuery();
+            var resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
-                final var entity = UrlCheck.fromResultSet(resultSet);
+                var entity = UrlCheck.fromResultSet(resultSet);
                 return Optional.of(entity);
             }
 
@@ -52,13 +52,13 @@ public final class UrlCheckRepository implements Repository<UrlCheck> {
             var connection = dataSource.getConnection();
             var statement = connection.createStatement()
         ) {
-            final var sql = "SELECT * FROM %s".formatted(TABLE_NAME);
+            var sql = "SELECT * FROM %s".formatted(TABLE_NAME);
             statement.executeQuery(sql);
-            final var resultSet = statement.getResultSet();
-            final var entities = new ArrayList<UrlCheck>();
+            var resultSet = statement.getResultSet();
+            var entities = new ArrayList<UrlCheck>();
 
             while (resultSet.next()) {
-                final var entity = UrlCheck.fromResultSet(resultSet);
+                var entity = UrlCheck.fromResultSet(resultSet);
                 entities.add(entity);
             }
 
@@ -67,13 +67,13 @@ public final class UrlCheckRepository implements Repository<UrlCheck> {
     }
 
     @Override
-    public void update(@NotNull final UrlCheck entity) throws SQLException {
+    public void update(@NotNull UrlCheck entity) throws SQLException {
         throw new RuntimeException("Not implemented");
     }
 
     @Override
-    public void insert(@NotNull final UrlCheck entity) throws SQLException {
-        final var sql = """
+    public void insert(@NotNull UrlCheck entity) throws SQLException {
+        var sql = """
             INSERT INTO %s (status_code, title, h1, description, url_id)
             VALUES (?, ?, ?, ?, ?)
             """.formatted(TABLE_NAME);
@@ -88,18 +88,18 @@ public final class UrlCheckRepository implements Repository<UrlCheck> {
             statement.setString(4, entity.description());
             statement.setLong(5, entity.urlId());
             statement.executeUpdate();
-            final var generatedKeys = statement.getGeneratedKeys();
+            var generatedKeys = statement.getGeneratedKeys();
 
             if (generatedKeys.next()) {
-                final var id = generatedKeys.getLong("id");
+                var id = generatedKeys.getLong("id");
                 syncEntity(id, entity);
             }
         }
     }
 
     @NotNull
-    public List<UrlCheck> findChecksByUrlId(@NotNull final Long urlId) throws SQLException {
-        final var sql = """
+    public List<UrlCheck> findChecksByUrlId(@NotNull Long urlId) throws SQLException {
+        var sql = """
             SELECT *
             FROM %s
             WHERE url_id = ?
@@ -110,11 +110,11 @@ public final class UrlCheckRepository implements Repository<UrlCheck> {
             var statement = connection.prepareStatement(sql)
         ) {
             statement.setLong(1, urlId);
-            final var resultSet = statement.executeQuery();
-            final var entities = new ArrayList<UrlCheck>();
+            var resultSet = statement.executeQuery();
+            var entities = new ArrayList<UrlCheck>();
 
             while (resultSet.next()) {
-                final var entity = UrlCheck.fromResultSet(resultSet);
+                var entity = UrlCheck.fromResultSet(resultSet);
                 entities.add(entity);
             }
 
@@ -123,8 +123,8 @@ public final class UrlCheckRepository implements Repository<UrlCheck> {
     }
 
     @NotNull
-    public Map<Long, UrlCheck> findLastChecksByUrlIds(@NotNull final List<Long> urlIds) throws SQLException {
-        final var sql = lastCheckSql(urlIds.size());
+    public Map<Long, UrlCheck> findLastChecksByUrlIds(@NotNull List<Long> urlIds) throws SQLException {
+        var sql = lastCheckSql(urlIds.size());
 
         try (
             var connection = dataSource.getConnection();
@@ -136,11 +136,11 @@ public final class UrlCheckRepository implements Repository<UrlCheck> {
                 index += 1;
             }
 
-            final var resultSet = statement.executeQuery();
-            final var entities = new HashMap<Long, UrlCheck>();
+            var resultSet = statement.executeQuery();
+            var entities = new HashMap<Long, UrlCheck>();
 
             while (resultSet.next()) {
-                final var entity = UrlCheck.fromResultSet(resultSet);
+                var entity = UrlCheck.fromResultSet(resultSet);
                 entities.put(entity.urlId(), entity);
             }
 
@@ -173,14 +173,14 @@ public final class UrlCheckRepository implements Repository<UrlCheck> {
             )""".formatted(TABLE_NAME, TABLE_NAME, placeholder);
     }
 
-    private void syncEntity(@NotNull final Long id, @NotNull final UrlCheck urlCheck) throws SQLException {
-        final var entityOptional = find(id);
+    private void syncEntity(@NotNull Long id, @NotNull UrlCheck urlCheck) throws SQLException {
+        var entityOptional = find(id);
 
         if (entityOptional.isEmpty()) {
             return;
         }
 
-        final var entity = entityOptional.get();
+        var entity = entityOptional.get();
 
         urlCheck.setId(id);
         urlCheck.setStatusCode(entity.statusCode());

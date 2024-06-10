@@ -22,11 +22,11 @@ public final class UrlPage implements Page {
     @Nullable
     private HttpFlash flash;
 
-    public UrlPage(@NotNull final Url url) {
+    public UrlPage(@NotNull Url url) {
         this(url, new ArrayList<>());
     }
 
-    public UrlPage(@NotNull final Url url, @Nullable final List<UrlCheck> urlChecks) {
+    public UrlPage(@NotNull Url url, @Nullable List<UrlCheck> urlChecks) {
         this.url = url;
         this.urlChecks = Objects.requireNonNullElse(urlChecks, new ArrayList<>());
     }
@@ -48,7 +48,7 @@ public final class UrlPage implements Page {
     }
 
     @Override
-    public void setFlash(@Nullable final HttpFlash flash) {
+    public void setFlash(@Nullable HttpFlash flash) {
         this.flash = flash;
     }
 

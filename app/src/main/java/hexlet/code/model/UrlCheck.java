@@ -29,11 +29,11 @@ public final class UrlCheck implements Entity {
     private Timestamp insertedAt;
 
     public UrlCheck(
-        final int statusCode,
-        @NotNull final String title,
-        @NotNull final String h1,
-        @NotNull final String description,
-        final long urlId
+        int statusCode,
+        @NotNull String title,
+        @NotNull String h1,
+        @NotNull String description,
+        long urlId
     ) {
         this.statusCode = statusCode;
         this.title = title;
@@ -42,16 +42,16 @@ public final class UrlCheck implements Entity {
         this.urlId = urlId;
     }
 
-    public static UrlCheck fromResultSet(@NotNull final ResultSet resultSet) throws SQLException {
-        final var id = resultSet.getLong("id");
-        final var statusCode = resultSet.getInt("status_code");
-        final var title = resultSet.getString("title");
-        final var h1 = resultSet.getString("h1");
-        final var description = resultSet.getString("description");
-        final var urlId = resultSet.getLong("url_id");
-        final var insertedAt = resultSet.getTimestamp("inserted_at");
+    public static UrlCheck fromResultSet(@NotNull ResultSet resultSet) throws SQLException {
+        var id = resultSet.getLong("id");
+        var statusCode = resultSet.getInt("status_code");
+        var title = resultSet.getString("title");
+        var h1 = resultSet.getString("h1");
+        var description = resultSet.getString("description");
+        var urlId = resultSet.getLong("url_id");
+        var insertedAt = resultSet.getTimestamp("inserted_at");
 
-        final var check = new UrlCheck(statusCode, title, h1, description, urlId);
+        var check = new UrlCheck(statusCode, title, h1, description, urlId);
         check.setId(id);
         check.setInsertedAt(insertedAt);
 
@@ -64,7 +64,7 @@ public final class UrlCheck implements Entity {
     }
 
     @Override
-    public void setId(@Nullable final Long id) {
+    public void setId(@Nullable Long id) {
         this.id = id;
     }
 
@@ -72,7 +72,7 @@ public final class UrlCheck implements Entity {
         return statusCode;
     }
 
-    public void setStatusCode(final int statusCode) {
+    public void setStatusCode(int statusCode) {
         this.statusCode = statusCode;
     }
 
@@ -81,7 +81,7 @@ public final class UrlCheck implements Entity {
         return title;
     }
 
-    public void setTitle(@NotNull final String title) {
+    public void setTitle(@NotNull String title) {
         this.title = title;
     }
 
@@ -90,7 +90,7 @@ public final class UrlCheck implements Entity {
         return h1;
     }
 
-    public void setH1(@NotNull final String h1) {
+    public void setH1(@NotNull String h1) {
         this.h1 = h1;
     }
 
@@ -99,7 +99,7 @@ public final class UrlCheck implements Entity {
         return description;
     }
 
-    public void setDescription(@NotNull final String description) {
+    public void setDescription(@NotNull String description) {
         this.description = description;
     }
 
@@ -107,7 +107,7 @@ public final class UrlCheck implements Entity {
         return urlId;
     }
 
-    public void setUrlId(final long urlId) {
+    public void setUrlId(long urlId) {
         this.urlId = urlId;
     }
 
@@ -116,7 +116,7 @@ public final class UrlCheck implements Entity {
         return insertedAt;
     }
 
-    public void setInsertedAt(@Nullable final Timestamp insertedAt) {
+    public void setInsertedAt(@Nullable Timestamp insertedAt) {
         this.insertedAt = insertedAt;
     }
 

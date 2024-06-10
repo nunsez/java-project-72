@@ -30,16 +30,16 @@ public final class HttpFlash {
     @NotNull
     private final String type;
 
-    private HttpFlash(@NotNull final String message, @NotNull final Type type) {
+    private HttpFlash(@NotNull String message, @NotNull Type type) {
         this.message = message;
         this.type = type.toString();
     }
 
-    public static HttpFlash success(@NotNull final String message) {
+    public static HttpFlash success(@NotNull String message) {
         return new HttpFlash(message, Type.SUCCESS);
     }
 
-    public static HttpFlash danger(@NotNull final String message) {
+    public static HttpFlash danger(@NotNull String message) {
         return new HttpFlash(message, Type.DANGER);
     }
 
@@ -53,9 +53,9 @@ public final class HttpFlash {
         return type;
     }
 
-    public static HttpFlash consumeFromSession(@NotNull final Context context) {
-        final var message = context.<String>consumeSessionAttribute(FLASH);
-        final var type = context.<String>consumeSessionAttribute(FLASH_TYPE);
+    public static HttpFlash consumeFromSession(@NotNull Context context) {
+        var message = context.<String>consumeSessionAttribute(FLASH);
+        var type = context.<String>consumeSessionAttribute(FLASH_TYPE);
 
         if (message == null) {
             return null;
@@ -69,7 +69,7 @@ public final class HttpFlash {
 
     }
 
-    public void saveToSession(@NotNull final Context context) {
+    public void saveToSession(@NotNull Context context) {
         context.sessionAttribute(FLASH, message());
         context.sessionAttribute(FLASH_TYPE, type());
     }

@@ -28,7 +28,7 @@ public class App {
     public static final String JAVA_ENV = System.getenv().getOrDefault("JAVA_ENV", "dev");
 
     public static void main(String[] args) throws IOException, SQLException {
-        final var app = getApp();
+        var app = getApp();
         app.start(getPort());
     }
 
@@ -40,10 +40,10 @@ public class App {
 
     @NotNull
     public static Javalin getApp() throws IOException, SQLException {
-        final var dataSource = getDataSource();
+        var dataSource = getDataSource();
         initDatabaseSchema(dataSource);
 
-        final var app = Javalin.create(config -> {
+        var app = Javalin.create(config -> {
             config.bundledPlugins.enableDevLogging();
             config.useVirtualThreads = true;
             config.fileRenderer(buildFileRenderer());
@@ -55,17 +55,17 @@ public class App {
     }
 
     private static int getPort() {
-        final var port = System.getenv().getOrDefault("PORT", "7070");
+        var port = System.getenv().getOrDefault("PORT", "7070");
         return Integer.parseInt(port);
     }
 
     @NotNull
     private static DataSource getDataSource() {
-        final var hikariConfig = new HikariConfig();
+        var hikariConfig = new HikariConfig();
 
         // h2database by default
-        final var driver = System.getenv().getOrDefault("JDBC_DRIVER", "org.h2.Driver");
-        final var jdbcUrl = System.getenv().getOrDefault("JDBC_DATABASE_URL", "jdbc:h2:mem:project;DB_CLOSE_DELAY=-1;");
+        var driver = System.getenv().getOrDefault("JDBC_DRIVER", "org.h2.Driver");
+        var jdbcUrl = System.getenv().getOrDefault("JDBC_DATABASE_URL", "jdbc:h2:mem:project;DB_CLOSE_DELAY=-1;");
 
         hikariConfig.setDriverClassName(driver);
         hikariConfig.setJdbcUrl(jdbcUrl);
@@ -73,8 +73,8 @@ public class App {
         return new HikariDataSource(hikariConfig);
     }
 
-    private static void initDatabaseSchema(@NotNull final DataSource dataSource) throws IOException, SQLException {
-        final var sql = readResourceFile("/schema.sql");
+    private static void initDatabaseSchema(@NotNull DataSource dataSource) throws IOException, SQLException {
+        var sql = readResourceFile("/schema.sql");
         LOGGER.info(sql);
 
         try (
@@ -86,7 +86,7 @@ public class App {
     }
 
     @NotNull
-    private static String readResourceFile(@NotNull final String filePath) throws IOException {
+    private static String readResourceFile(@NotNull String filePath) throws IOException {
         try (
             var inputStream = Objects.requireNonNull(
                 App.class.getResourceAsStream(filePath),
@@ -104,7 +104,7 @@ public class App {
         final TemplateEngine templateEngine;
 
         if (JAVA_ENV.equals("dev")) {
-            final var codeResolver = new DirectoryCodeResolver(Path.of("src", "main", "jte"));
+            var codeResolver = new DirectoryCodeResolver(Path.of("src", "main", "jte"));
             templateEngine = TemplateEngine.create(codeResolver, ContentType.Html);
         } else {
             templateEngine = TemplateEngine.createPrecompiled(ContentType.Html);

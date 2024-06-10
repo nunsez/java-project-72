@@ -21,12 +21,12 @@ public final class UrlsPage implements Page {
     @Nullable
     private HttpFlash flash;
 
-    public UrlsPage(@NotNull final List<Url> urls, @NotNull final Map<Long, UrlCheck> lastChecks) {
+    public UrlsPage(@NotNull List<Url> urls, @NotNull Map<Long, UrlCheck> lastChecks) {
         this.urls = urls;
         this.lastChecks = lastChecks;
     }
 
-    public UrlsPage(@NotNull final List<Url> urls) {
+    public UrlsPage(@NotNull List<Url> urls) {
         this(urls, Map.of());
     }
 
@@ -35,7 +35,7 @@ public final class UrlsPage implements Page {
     }
 
     @Nullable
-    public UrlCheck lastCheckForUrl(@NotNull final Url url) {
+    public UrlCheck lastCheckForUrl(@NotNull Url url) {
         return lastChecks.get(url.id());
     }
 
@@ -46,7 +46,7 @@ public final class UrlsPage implements Page {
     }
 
     @Override
-    public void setFlash(@Nullable final HttpFlash flash) {
+    public void setFlash(@Nullable HttpFlash flash) {
         this.flash = flash;
     }
 

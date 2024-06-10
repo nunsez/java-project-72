@@ -24,18 +24,18 @@ public final class UrlRepository implements Repository<Url> {
 
     @NotNull
     @Override
-    public Optional<Url> find(@NotNull final Long id) throws SQLException {
-        final var sql = "SELECT * FROM %s WHERE id = ?".formatted(TABLE_NAME);
+    public Optional<Url> find(@NotNull Long id) throws SQLException {
+        var sql = "SELECT * FROM %s WHERE id = ?".formatted(TABLE_NAME);
 
         try (
             var connection = dataSource.getConnection();
             var statement = connection.prepareStatement(sql)
         ) {
             statement.setLong(1, id);
-            final var resultSet = statement.executeQuery();
+            var resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
-                final var entity = Url.fromResultSet(resultSet);
+                var entity = Url.fromResultSet(resultSet);
                 return Optional.of(entity);
             }
 
@@ -50,13 +50,13 @@ public final class UrlRepository implements Repository<Url> {
             var connection = dataSource.getConnection();
             var statement = connection.createStatement()
         ) {
-            final var sql = "SELECT * FROM %s".formatted(TABLE_NAME);
+            var sql = "SELECT * FROM %s".formatted(TABLE_NAME);
             statement.executeQuery(sql);
-            final var resultSet = statement.getResultSet();
-            final var entities = new ArrayList<Url>();
+            var resultSet = statement.getResultSet();
+            var entities = new ArrayList<Url>();
 
             while (resultSet.next()) {
-                final var entity = Url.fromResultSet(resultSet);
+                var entity = Url.fromResultSet(resultSet);
                 entities.add(entity);
             }
 
@@ -65,13 +65,13 @@ public final class UrlRepository implements Repository<Url> {
     }
 
     @Override
-    public void update(@NotNull final Url entity) throws SQLException {
+    public void update(@NotNull Url entity) throws SQLException {
         throw new RuntimeException("Not implemented");
     }
 
     @Override
-    public void insert(@NotNull final Url entity) throws SQLException {
-        final var sql = "INSERT INTO %s (name) VALUES (?)".formatted(TABLE_NAME);
+    public void insert(@NotNull Url entity) throws SQLException {
+        var sql = "INSERT INTO %s (name) VALUES (?)".formatted(TABLE_NAME);
 
         try (
             var connection = dataSource.getConnection();
@@ -79,28 +79,28 @@ public final class UrlRepository implements Repository<Url> {
         ) {
             statement.setString(1, entity.name());
             statement.executeUpdate();
-            final var generatedKeys = statement.getGeneratedKeys();
+            var generatedKeys = statement.getGeneratedKeys();
 
             if (generatedKeys.next()) {
-                final var id = generatedKeys.getLong("id");
+                var id = generatedKeys.getLong("id");
                 syncEntity(id, entity);
             }
         }
     }
 
-    public Optional<Url> findByName(@Nullable final String name) throws SQLException {
+    public Optional<Url> findByName(@Nullable String name) throws SQLException {
         if (name == null) {
             return Optional.empty();
         }
 
-        final var sql = "SELECT * FROM %s WHERE name = ?".formatted(TABLE_NAME);
+        var sql = "SELECT * FROM %s WHERE name = ?".formatted(TABLE_NAME);
 
         try (
             var connection = dataSource.getConnection();
             var statement = connection.prepareStatement(sql)
         ) {
             statement.setString(1, name);
-            final var resultSet = statement.executeQuery();
+            var resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
                 return Optional.of(Url.fromResultSet(resultSet));
@@ -110,14 +110,14 @@ public final class UrlRepository implements Repository<Url> {
         }
     }
 
-    private void syncEntity(@NotNull final Long id, @NotNull final Url url) throws SQLException {
-        final var entityOptional = find(id);
+    private void syncEntity(@NotNull Long id, @NotNull Url url) throws SQLException {
+        var entityOptional = find(id);
 
         if (entityOptional.isEmpty()) {
             return;
         }
 
-        final var entity = entityOptional.get();
+        var entity = entityOptional.get();
 
         url.setId(Objects.requireNonNull(entity.id()));
         url.setName(entity.name());

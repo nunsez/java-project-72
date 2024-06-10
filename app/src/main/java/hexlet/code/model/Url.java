@@ -18,16 +18,16 @@ public final class Url implements Entity {
     @Nullable
     private Timestamp insertedAt;
 
-    public Url(@NotNull final String name) {
+    public Url(@NotNull String name) {
         this.name = name;
     }
 
-    public static Url fromResultSet(@NotNull final ResultSet resultSet) throws SQLException {
-        final var id = resultSet.getLong("id");
-        final var name = resultSet.getString("name");
-        final var insertedAt = resultSet.getTimestamp("inserted_at");
+    public static Url fromResultSet(@NotNull ResultSet resultSet) throws SQLException {
+        var id = resultSet.getLong("id");
+        var name = resultSet.getString("name");
+        var insertedAt = resultSet.getTimestamp("inserted_at");
 
-        final var url = new Url(name);
+        var url = new Url(name);
         url.setId(id);
         url.setInsertedAt(insertedAt);
 
@@ -40,7 +40,7 @@ public final class Url implements Entity {
     }
 
     @Override
-    public void setId(@NotNull final Long id) {
+    public void setId(@NotNull Long id) {
         this.id = id;
     }
 
@@ -48,7 +48,7 @@ public final class Url implements Entity {
         return name;
     }
 
-    public void setName(@NotNull final String name) {
+    public void setName(@NotNull String name) {
         this.name = name;
     }
 
@@ -56,7 +56,7 @@ public final class Url implements Entity {
         return insertedAt;
     }
 
-    public void setInsertedAt(@NotNull final Timestamp insertedAt) {
+    public void setInsertedAt(@NotNull Timestamp insertedAt) {
         this.insertedAt = insertedAt;
     }
 
