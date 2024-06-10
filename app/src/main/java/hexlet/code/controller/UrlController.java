@@ -18,8 +18,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
 
 public final class UrlController {
 
@@ -47,25 +45,13 @@ public final class UrlController {
         context.redirect(NamedRoutes.urlsPath());
     }
 
-    public static void getAll(@NotNull final Context context) {
-        final List<Url> urls;
+    public static void getAll(@NotNull final Context context) throws SQLException {
+        var urls = URL_REPOSITORY.getEntities().stream()
+            .sorted(Comparator.nullsLast(Comparator.comparing(Url::id).reversed()))
+            .toList();
 
-        try {
-            urls = URL_REPOSITORY.getEntities().stream()
-                .sorted(Comparator.nullsLast(Comparator.comparing(Url::id).reversed()))
-                .toList();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        final Map<Long, UrlCheck> lastChecks;
-
-        try {
-            var urlIds = urls.stream().map(Url::id).toList();
-            lastChecks = URL_CHECK_REPOSITORY.findLastChecksByUrlIds(urlIds);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        var urlIds = urls.stream().map(Url::id).toList();
+        var lastChecks = URL_CHECK_REPOSITORY.findLastChecksByUrlIds(urlIds);
 
         final var page = new UrlsPage(urls, lastChecks);
         final var flash = context.<HttpFlash>attribute(HttpFlash.FLASH);
@@ -74,26 +60,15 @@ public final class UrlController {
         context.render("url/index.jte", model("page", page));
     }
 
-    public static void getOne(@NotNull final Context context) {
+    public static void getOne(@NotNull final Context context) throws SQLException {
         final var id = context.pathParamAsClass(URL_PARAM, Long.class).get();
-        Url url;
 
-        try {
-            url = URL_REPOSITORY.find(id)
-                .orElseThrow(() -> new NotFoundResponse(NOT_FOUND_MESSAGE.formatted(id)));
-        } catch (SQLException e) {
-            throw new NotFoundResponse(NOT_FOUND_MESSAGE.formatted(id));
-        }
+        var url = URL_REPOSITORY.find(id)
+            .orElseThrow(() -> new NotFoundResponse(NOT_FOUND_MESSAGE.formatted(id)));
 
-        List<UrlCheck> urlChecks;
-
-        try {
-            urlChecks = URL_CHECK_REPOSITORY.findChecksByUrlId(id).stream()
-                .sorted(Comparator.nullsLast(Comparator.comparing(UrlCheck::insertedAt).reversed()))
-                .toList();
-        } catch (SQLException e) {
-            urlChecks = List.of();
-        }
+        var urlChecks = URL_CHECK_REPOSITORY.findChecksByUrlId(id).stream()
+            .sorted(Comparator.nullsLast(Comparator.comparing(UrlCheck::insertedAt).reversed()))
+            .toList();
 
         final var page = new UrlPage(url, urlChecks);
         final var flash = context.<HttpFlash>attribute(HttpFlash.FLASH);

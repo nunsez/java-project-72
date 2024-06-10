@@ -11,6 +11,7 @@ postgresql = "42.7.3"
 jte = "3.1.12"
 unirest = "4.4.0"
 jsoup = "1.17.2"
+mockwebserver = "4.12.0"
 
 [libraries]
 assertj-core = { group = "org.assertj", name = "assertj-core", version.ref = "assertj" }
@@ -26,6 +27,7 @@ postgresql = { group = "org.postgresql", name = "postgresql", version.ref = "pos
 jte = { group = "gg.jte", name = "jte", version.ref = "jte" }
 unirest-java-core = { group = "com.konghq", name = "unirest-java-core", version.ref = "unirest" }
 jsoup = { group = "org.jsoup", name = "jsoup", version.ref = "jsoup"}
+mockwebserver = { group = "com.squareup.okhttp3", name = "mockwebserver", version.ref = "mockwebserver" }
 
 [plugins]
 shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }

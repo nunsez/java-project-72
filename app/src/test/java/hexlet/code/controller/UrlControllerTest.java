@@ -13,7 +13,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -25,7 +24,7 @@ class UrlControllerTest {
     private UrlRepository urlRepository;
 
     @BeforeEach
-    public void setup() throws IOException, SQLException {
+    public void beforeEach() throws IOException, SQLException {
         app = App.getApp();
         urlRepository = new UrlRepository(App.DATA_SOURCE);
     }
@@ -33,7 +32,7 @@ class UrlControllerTest {
     @ParameterizedTest
     @ValueSource(strings = {"http://example.com"})
     public void createOk(String input) {
-        final var body = "url=" + input;
+        var body = "url=" + input;
 
         JavalinTest.test(app, (server, client) -> {
             try (var response = client.post(NamedRoutes.urlsPath(), body)) {
@@ -46,7 +45,7 @@ class UrlControllerTest {
     @ParameterizedTest
     @ValueSource(strings = {"invalid%20url"})
     public void createInvalid(String input) {
-        final var body = "url=" + input;
+        var body = "url=" + input;
 
         JavalinTest.test(app, (server, client) -> {
             try (var response = client.post(NamedRoutes.urlsPath(), body)) {
@@ -59,7 +58,7 @@ class UrlControllerTest {
     @ParameterizedTest
     @ValueSource(strings = {"http://example.com"})
     public void createDuplicate(String input) {
-        final var body = "url=" + input;
+        var body = "url=" + input;
 
         JavalinTest.test(app, (server, client) -> {
             try (var response = client.post(NamedRoutes.urlsPath(), body)) {
@@ -76,7 +75,7 @@ class UrlControllerTest {
     @Test
     public void getAllEmpty() {
         JavalinTest.test(app, (server, client) -> {
-            final var response = client.get(NamedRoutes.urlsPath());
+            var response = client.get(NamedRoutes.urlsPath());
             assertThat(response.code()).isEqualTo(200);
         });
     }
@@ -87,16 +86,16 @@ class UrlControllerTest {
         urlRepository.save(new Url(input));
 
         JavalinTest.test(app, (server, client) -> {
-            final var response = client.get(NamedRoutes.urlsPath());
+            var response = client.get(NamedRoutes.urlsPath());
             assertThat(response.code()).isEqualTo(200);
-            assertThat(Objects.requireNonNull(response.body()).string()).contains(input);
+            assertThat(response.body().string()).contains(input);
         });
     }
 
     @Test
     public void getOneNotFound() {
         JavalinTest.test(app, (server, client) -> {
-            final var response = client.get(NamedRoutes.urlPath("777"));
+            var response = client.get(NamedRoutes.urlPath("777"));
             assertThat(response.code()).isEqualTo(404);
         });
     }
@@ -104,13 +103,13 @@ class UrlControllerTest {
     @ParameterizedTest
     @ValueSource(strings = {"http://example.com"})
     public void getOneOk(String input) throws SQLException {
-        final var url = new Url(input);
+        var url = new Url(input);
         urlRepository.save(url);
 
         JavalinTest.test(app, (server, client) -> {
-            final var response = client.get(NamedRoutes.urlPath(url));
+            var response = client.get(NamedRoutes.urlPath(url));
             assertThat(response.code()).isEqualTo(200);
-            assertThat(Objects.requireNonNull(response.body()).string()).contains(url.name());
+            assertThat(response.body().string()).contains(url.name());
         });
     }
 

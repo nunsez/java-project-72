@@ -69,10 +69,6 @@ public final class AddUrlCheckService implements Function<Long, Result<UrlCheck,
     }
 
     private UrlCheck buildUrlCheck(Long urlId, Integer statusCode, Document doc) {
-        if (statusCode != 200) {
-            return new UrlCheck(statusCode, "", "", "", urlId);
-        }
-
         final var h1Node = doc.select("h1").first();
         final var descriptionNode = doc.select("head meta[name='description']").first();
 
