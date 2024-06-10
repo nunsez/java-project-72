@@ -76,8 +76,8 @@ public final class UrlCheckRepository implements Repository<UrlCheck> {
     @Override
     public void insert(@NotNull UrlCheck entity) throws SQLException {
         var sql = """
-            INSERT INTO %s (status_code, title, h1, description, url_id)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO %s (status_code, title, h1, description, url_id, created_at)
+            VALUES (?, ?, ?, ?, ?, NOW())
             """.formatted(TABLE_NAME);
 
         try (
@@ -165,10 +165,10 @@ public final class UrlCheckRepository implements Repository<UrlCheck> {
                 SELECT DISTINCT ON (url_id)
                     url_id,
                     id AS check_id,
-                    inserted_at
+                    created_at
                 FROM %s
                 GROUP by url_id, check_id
-                order by url_id, inserted_at DESC
+                order by url_id, created_at DESC
             )
 
             SELECT *

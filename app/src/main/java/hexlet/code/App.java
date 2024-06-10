@@ -25,9 +25,6 @@ import java.util.stream.Collectors;
 
 public final class App {
 
-    @NotNull
-    public static final String JAVA_ENV = System.getenv().getOrDefault("JAVA_ENV", "dev");
-
     public static void main(@NotNull String[] args) throws IOException, SQLException {
         var app = getApp();
         app.start(getPort());
@@ -112,7 +109,7 @@ public final class App {
     private static FileRenderer buildFileRenderer() {
         final TemplateEngine templateEngine;
 
-        if (JAVA_ENV.equals("dev")) {
+        if ("true".equals(System.getProperty("jte.mode.ondemand"))) {
             var codeResolver = new DirectoryCodeResolver(Path.of("src", "main", "jte"));
             templateEngine = TemplateEngine.create(codeResolver, ContentType.Html);
         } else {

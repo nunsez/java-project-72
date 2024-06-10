@@ -50,7 +50,7 @@ public final class UrlCheck implements Entity {
         var h1 = resultSet.getString("h1");
         var description = resultSet.getString("description");
         var urlId = resultSet.getLong("url_id");
-        var insertedAt = resultSet.getTimestamp("inserted_at");
+        var insertedAt = resultSet.getTimestamp("created_at");
 
         var check = new UrlCheck(statusCode, title, h1, description, urlId);
         check.setId(id);

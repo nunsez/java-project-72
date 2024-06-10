@@ -26,7 +26,7 @@ public final class Url implements Entity {
     public static Url fromResultSet(@NotNull ResultSet resultSet) throws SQLException {
         var id = resultSet.getLong("id");
         var name = resultSet.getString("name");
-        var insertedAt = resultSet.getTimestamp("inserted_at");
+        var insertedAt = resultSet.getTimestamp("created_at");
 
         var url = new Url(name);
         url.setId(id);

@@ -49,16 +49,22 @@ dependencies {
 // Set UTF-8 encoding
 tasks {
     withType<JavaCompile>().configureEach { options.encoding = "UTF-8" }
-    withType<JavaExec>().configureEach { defaultCharacterEncoding = "UTF-8" }
     withType<Javadoc>().configureEach { options.encoding = "UTF-8" }
-    withType<Test>().configureEach { defaultCharacterEncoding = "UTF-8" }
+    withType<JavaExec>().configureEach {
+        defaultCharacterEncoding = "UTF-8"
+        systemProperty("jte.mode.ondemand", "true")
+    }
+    withType<Test>().configureEach {
+        defaultCharacterEncoding = "UTF-8"
+        systemProperty("jte.mode.ondemand", "true")
+    }
 }
 
 tasks.jar {
     dependsOn(tasks.precompileJte)
     from(fileTree("jte-classes")) {
-        include("**/*.class")
-        include("**/*.bin")
+        include("**/precompiled/**/*.class")
+        include("**/precompiled/**/*.bin")
     }
 }
 
@@ -80,13 +86,4 @@ tasks.jacocoTestReport {
         html.required = true
         csv.required = false
     }
-
-    val coverageDirs = classDirectories.files.flatMap { dir ->
-        val tree = fileTree(dir)
-        tree.exclude("**/gg/jte/generated/*")
-        tree
-    }
-
-    classDirectories.setFrom(coverageDirs)
-
 }

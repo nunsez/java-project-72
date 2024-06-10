@@ -73,7 +73,7 @@ public final class UrlRepository implements Repository<Url> {
 
     @Override
     public void insert(@NotNull Url entity) throws SQLException {
-        var sql = "INSERT INTO %s (name) VALUES (?)".formatted(TABLE_NAME);
+        var sql = "INSERT INTO %s (name, created_at) VALUES (?, NOW())".formatted(TABLE_NAME);
 
         try (
             var connection = dataSource.getConnection();
