@@ -33,6 +33,7 @@ public final class RoutesBuilder {
         });
     }
 
+    @NotNull
     private static String pattern(@NotNull String param) {
         return "{" + param + "}";
     }

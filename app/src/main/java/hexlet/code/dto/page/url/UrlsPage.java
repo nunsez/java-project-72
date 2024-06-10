@@ -30,6 +30,7 @@ public final class UrlsPage implements Page {
         this(urls, Map.of());
     }
 
+    @NotNull
     public List<Url> urls() {
         return urls;
     }

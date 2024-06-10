@@ -22,6 +22,7 @@ public final class Url implements Entity {
         this.name = name;
     }
 
+    @NotNull
     public static Url fromResultSet(@NotNull ResultSet resultSet) throws SQLException {
         var id = resultSet.getLong("id");
         var name = resultSet.getString("name");
@@ -34,6 +35,7 @@ public final class Url implements Entity {
         return url;
     }
 
+    @Nullable
     @Override
     public Long id() {
         return id;
@@ -44,6 +46,7 @@ public final class Url implements Entity {
         this.id = id;
     }
 
+    @NotNull
     public String name() {
         return name;
     }
@@ -52,6 +55,7 @@ public final class Url implements Entity {
         this.name = name;
     }
 
+    @Nullable
     public Timestamp insertedAt() {
         return insertedAt;
     }

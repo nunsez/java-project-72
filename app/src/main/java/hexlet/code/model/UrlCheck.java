@@ -42,6 +42,7 @@ public final class UrlCheck implements Entity {
         this.urlId = urlId;
     }
 
+    @NotNull
     public static UrlCheck fromResultSet(@NotNull ResultSet resultSet) throws SQLException {
         var id = resultSet.getLong("id");
         var statusCode = resultSet.getInt("status_code");
@@ -58,6 +59,7 @@ public final class UrlCheck implements Entity {
         return check;
     }
 
+    @Nullable
     @Override
     public Long id() {
         return id;

@@ -28,6 +28,7 @@ public final class AddUrlCheckService {
         this.urlCheckRepository = urlCheckRepository;
     }
 
+    @NotNull
     public UrlCheck call(@NotNull Long urlId) throws ServiceException {
         var url = getUrl(urlId);
         var response = Unirest.get(url.name()).asString();
@@ -38,6 +39,7 @@ public final class AddUrlCheckService {
         return urlCheck;
     }
 
+    @NotNull
     private Url getUrl(@NotNull Long id) throws ServiceException {
         try {
             return urlRepository.find(id)
@@ -47,7 +49,8 @@ public final class AddUrlCheckService {
         }
     }
 
-    private UrlCheck buildUrlCheck(Long urlId, Integer statusCode, Document doc) {
+    @NotNull
+    private UrlCheck buildUrlCheck(@NotNull Long urlId, @NotNull Integer statusCode, @NotNull Document doc) {
         var h1Node = doc.select("h1").first();
         var descriptionNode = doc.select("head meta[name='description']").first();
 

@@ -26,13 +26,7 @@ public final class AddUrlService {
         var urlName = checkMalformed(rawUrl);
         checkExists(urlName);
         var url = new Url(urlName);
-
-        try {
-            urlRepository.save(url);
-        } catch (SQLException e) {
-            throw new ServiceException("Ошибка при добавлении URL");
-        }
-
+        save(url);
         return url;
     }
 
@@ -77,6 +71,14 @@ public final class AddUrlService {
 
         if (url.isPresent()) {
             throw new ServiceException("Страница уже существует");
+        }
+    }
+
+    private void save(@NotNull Url url) throws ServiceException {
+        try {
+            urlRepository.save(url);
+        } catch (SQLException e) {
+            throw new ServiceException("Ошибка при добавлении URL");
         }
     }
 

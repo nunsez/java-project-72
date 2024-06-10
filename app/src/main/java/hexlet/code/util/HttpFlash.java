@@ -2,6 +2,7 @@ package hexlet.code.util;
 
 import io.javalin.http.Context;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public final class HttpFlash {
 
@@ -13,11 +14,13 @@ public final class HttpFlash {
 
     public enum Type {
         SUCCESS {
+            @NotNull
             public String toString() {
                 return "success";
             }
         },
         DANGER {
+            @NotNull
             public String toString() {
                 return "danger";
             }
@@ -35,10 +38,12 @@ public final class HttpFlash {
         this.type = type.toString();
     }
 
+    @NotNull
     public static HttpFlash success(@NotNull String message) {
         return new HttpFlash(message, Type.SUCCESS);
     }
 
+    @NotNull
     public static HttpFlash danger(@NotNull String message) {
         return new HttpFlash(message, Type.DANGER);
     }
@@ -53,6 +58,7 @@ public final class HttpFlash {
         return type;
     }
 
+    @Nullable
     public static HttpFlash consumeFromSession(@NotNull Context context) {
         var message = context.<String>consumeSessionAttribute(FLASH);
         var type = context.<String>consumeSessionAttribute(FLASH_TYPE);

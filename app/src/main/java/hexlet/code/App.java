@@ -25,9 +25,10 @@ import java.util.stream.Collectors;
 
 public final class App {
 
+    @NotNull
     public static final String JAVA_ENV = System.getenv().getOrDefault("JAVA_ENV", "dev");
 
-    public static void main(String[] args) throws IOException, SQLException {
+    public static void main(@NotNull String[] args) throws IOException, SQLException {
         var app = getApp();
         app.start(getPort());
     }

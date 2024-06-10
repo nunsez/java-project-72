@@ -16,11 +16,13 @@ import java.util.stream.IntStream;
 
 public final class UrlCheckRepository implements Repository<UrlCheck> {
 
+    @NotNull
     private final DataSource dataSource;
 
+    @NotNull
     public static final String TABLE_NAME = "url_checks";
 
-    public UrlCheckRepository(DataSource dataSource) {
+    public UrlCheckRepository(@NotNull DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
@@ -148,6 +150,7 @@ public final class UrlCheckRepository implements Repository<UrlCheck> {
         }
     }
 
+    @NotNull
     private static String lastCheckSql(int size) {
         var placeholder = IntStream.range(0, size)
             .mapToObj(i -> "?")

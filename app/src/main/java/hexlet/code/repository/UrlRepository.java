@@ -14,11 +14,13 @@ import java.util.Optional;
 
 public final class UrlRepository implements Repository<Url> {
 
+    @NotNull
     private final DataSource dataSource;
 
+    @NotNull
     public static final String TABLE_NAME = "urls";
 
-    public UrlRepository(DataSource dataSource) {
+    public UrlRepository(@NotNull DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
@@ -88,6 +90,7 @@ public final class UrlRepository implements Repository<Url> {
         }
     }
 
+    @NotNull
     public Optional<Url> findByName(@Nullable String name) throws SQLException {
         if (name == null) {
             return Optional.empty();
@@ -121,7 +124,7 @@ public final class UrlRepository implements Repository<Url> {
 
         url.setId(Objects.requireNonNull(entity.id()));
         url.setName(entity.name());
-        url.setInsertedAt(entity.insertedAt());
+        url.setInsertedAt(Objects.requireNonNull(entity.insertedAt(), "must be set by database"));
     }
 
 }
