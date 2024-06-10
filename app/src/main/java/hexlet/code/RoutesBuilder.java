@@ -7,7 +7,7 @@ import hexlet.code.util.NamedRoutes;
 import io.javalin.Javalin;
 import org.jetbrains.annotations.NotNull;
 
-public class RoutesBuilder {
+public final class RoutesBuilder {
 
     public static void apply(@NotNull Javalin app) {
         app.before(context -> context.contentType("text/plain;charset=utf-8"));

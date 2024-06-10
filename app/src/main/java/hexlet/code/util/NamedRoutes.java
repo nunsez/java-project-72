@@ -1,10 +1,9 @@
 package hexlet.code.util;
 
 import hexlet.code.model.Url;
-import hexlet.code.model.UrlCheck;
 import org.jetbrains.annotations.NotNull;
 
-public class NamedRoutes {
+public final class NamedRoutes {
 
     @NotNull
     public static String rootPath() {
@@ -45,21 +44,6 @@ public class NamedRoutes {
     @NotNull
     public static String urlChecksPath(@NotNull Url url) {
         return urlChecksPath(String.valueOf(url.id()));
-    }
-
-    @NotNull
-    public static String urlCheckPath(@NotNull String urlId, @NotNull String urlCheckId) {
-        return urlChecksPath(urlId) + "/" + urlCheckId;
-    }
-
-    @NotNull
-    public static String urlCheckPath(@NotNull Long urlId, @NotNull Long urlCheckId) {
-        return urlCheckPath(String.valueOf(urlId), String.valueOf(urlCheckId));
-    }
-
-    @NotNull
-    public static String urlCheckPath(@NotNull UrlCheck urlCheck) {
-        return urlCheckPath(String.valueOf(urlCheck.urlId()), String.valueOf(urlCheck.id()));
     }
 
 }

@@ -17,7 +17,7 @@ class AppTest {
     private Javalin app;
 
     @BeforeEach
-    public void setup() throws SQLException, IOException {
+    public void beforeEach() throws SQLException, IOException {
         app = App.getApp();
     }
 

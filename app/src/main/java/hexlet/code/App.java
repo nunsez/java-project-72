@@ -23,7 +23,7 @@ import java.sql.SQLException;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class App {
+public final class App {
 
     public static final String JAVA_ENV = System.getenv().getOrDefault("JAVA_ENV", "dev");
 
