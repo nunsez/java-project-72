@@ -65,11 +65,20 @@ public final class App {
         var hikariConfig = new HikariConfig();
 
         // h2database by default
-        var driver = System.getenv().getOrDefault("JDBC_DRIVER", "org.h2.Driver");
-        var jdbcUrl = System.getenv().getOrDefault("JDBC_DATABASE_URL", "jdbc:h2:mem:project;DB_CLOSE_DELAY=-1;");
-
-        hikariConfig.setDriverClassName(driver);
+        var jdbcUrl = System.getenv()
+            .getOrDefault("JDBC_DATABASE_URL", "jdbc:h2:mem:project;DB_CLOSE_DELAY=-1;");
         hikariConfig.setJdbcUrl(jdbcUrl);
+
+        if (jdbcUrl.startsWith("jdbc:h2")) {
+            hikariConfig.setDriverClassName("org.h2.Driver");
+        } else if (jdbcUrl.startsWith("jdbc:postgresql")) {
+            hikariConfig.setDriverClassName("org.postgresql.Driver");
+        } else {
+            var driver = System.getenv("JDBC_DRIVER");
+            if (driver != null) {
+                hikariConfig.setDriverClassName(driver);
+            }
+        }
 
         return new HikariDataSource(hikariConfig);
     }
