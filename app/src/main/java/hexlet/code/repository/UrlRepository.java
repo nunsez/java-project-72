@@ -50,7 +50,7 @@ public final class UrlRepository implements Repository<Url> {
             var connection = dataSource.getConnection();
             var statement = connection.createStatement()
         ) {
-            final var sql = "SELECT * from %s".formatted(TABLE_NAME);
+            final var sql = "SELECT * FROM %s".formatted(TABLE_NAME);
             statement.executeQuery(sql);
             final var resultSet = statement.getResultSet();
             final var entities = new ArrayList<Url>();
@@ -71,7 +71,7 @@ public final class UrlRepository implements Repository<Url> {
 
     @Override
     public void insert(@NotNull final Url entity) throws SQLException {
-        final var sql = "INSERT INTO %s (name, inserted_at) VALUES (?, NOW())".formatted(TABLE_NAME);
+        final var sql = "INSERT INTO %s (name) VALUES (?)".formatted(TABLE_NAME);
 
         try (
             var connection = dataSource.getConnection();

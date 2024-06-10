@@ -17,6 +17,7 @@ import io.javalin.http.NotFoundResponse;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -47,21 +48,23 @@ public final class UrlController {
     }
 
     public static void getAll(@NotNull final Context context) {
-        List<Url> urls;
+        final List<Url> urls;
 
         try {
-            urls = URL_REPOSITORY.getEntities();
+            urls = URL_REPOSITORY.getEntities().stream()
+                .sorted(Comparator.nullsLast(Comparator.comparing(Url::id).reversed()))
+                .toList();
         } catch (SQLException e) {
-            urls = List.of();
+            throw new RuntimeException(e);
         }
 
-        Map<Long, UrlCheck> lastChecks;
+        final Map<Long, UrlCheck> lastChecks;
 
         try {
             var urlIds = urls.stream().map(Url::id).toList();
             lastChecks = URL_CHECK_REPOSITORY.findLastChecksByUrlIds(urlIds);
         } catch (SQLException e) {
-            lastChecks = Map.of();
+            throw new RuntimeException(e);
         }
 
         final var page = new UrlsPage(urls, lastChecks);
@@ -85,7 +88,9 @@ public final class UrlController {
         List<UrlCheck> urlChecks;
 
         try {
-            urlChecks = URL_CHECK_REPOSITORY.findChecksByUrlId(id);
+            urlChecks = URL_CHECK_REPOSITORY.findChecksByUrlId(id).stream()
+                .sorted(Comparator.nullsLast(Comparator.comparing(UrlCheck::insertedAt).reversed()))
+                .toList();
         } catch (SQLException e) {
             urlChecks = List.of();
         }

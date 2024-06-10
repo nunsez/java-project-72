@@ -6,7 +6,13 @@ import org.jetbrains.annotations.NotNull;
 import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public final class UrlCheckRepository implements Repository<UrlCheck> {
 
@@ -46,7 +52,7 @@ public final class UrlCheckRepository implements Repository<UrlCheck> {
             var connection = dataSource.getConnection();
             var statement = connection.createStatement()
         ) {
-            final var sql = "SELECT * from %s".formatted(TABLE_NAME);
+            final var sql = "SELECT * FROM %s".formatted(TABLE_NAME);
             statement.executeQuery(sql);
             final var resultSet = statement.getResultSet();
             final var entities = new ArrayList<UrlCheck>();
@@ -68,8 +74,8 @@ public final class UrlCheckRepository implements Repository<UrlCheck> {
     @Override
     public void insert(@NotNull final UrlCheck entity) throws SQLException {
         final var sql = """
-            INSERT INTO %s (status_code, title, h1, description, url_id, inserted_at)
-            VALUES (?, ?, ?, ?, ?, NOW())
+            INSERT INTO %s (status_code, title, h1, description, url_id)
+            VALUES (?, ?, ?, ?, ?)
             """.formatted(TABLE_NAME);
 
         try (
@@ -95,8 +101,8 @@ public final class UrlCheckRepository implements Repository<UrlCheck> {
     public List<UrlCheck> findChecksByUrlId(@NotNull final Long urlId) throws SQLException {
         final var sql = """
             SELECT *
-            FROM %s WHERE url_id = ?
-            ORDER BY inserted_at DESC
+            FROM %s
+            WHERE url_id = ?
             """.formatted(TABLE_NAME);
 
         try (
@@ -118,19 +124,18 @@ public final class UrlCheckRepository implements Repository<UrlCheck> {
 
     @NotNull
     public Map<Long, UrlCheck> findLastChecksByUrlIds(@NotNull final List<Long> urlIds) throws SQLException {
-        final var sql = """
-            SELECT *
-            FROM %s WHERE url_id IN (?)
-            ORDER BY inserted_at DESC
-            LIMIT 1
-            """.formatted(TABLE_NAME);
+        final var sql = lastCheckSql(urlIds.size());
 
         try (
             var connection = dataSource.getConnection();
-            var statement = connection.prepareStatement(sql)
+            var statement = connection.prepareStatement(sql);
         ) {
-            var array = connection.createArrayOf("BIGINT", urlIds.toArray());
-            statement.setArray(1, array);
+            var index = 1;
+            for (var urlId : urlIds) {
+                statement.setLong(index, urlId);
+                index += 1;
+            }
+
             final var resultSet = statement.executeQuery();
             final var entities = new HashMap<Long, UrlCheck>();
 
@@ -141,6 +146,31 @@ public final class UrlCheckRepository implements Repository<UrlCheck> {
 
             return entities;
         }
+    }
+
+    private static String lastCheckSql(int size) {
+        var placeholder = IntStream.range(0, size)
+            .mapToObj(i -> "?")
+            .collect(Collectors.joining(","));
+
+        return """
+            WITH last_checks AS (
+                SELECT DISTINCT ON (url_id)
+                    url_id,
+                    id AS check_id,
+                    inserted_at
+                FROM %s
+                GROUP by url_id, check_id
+                order by url_id, inserted_at DESC
+            )
+
+            SELECT *
+            FROM %s
+            WHERE id IN (
+                SELECT check_id
+                FROM last_checks
+                WHERE url_id IN (%s)
+            )""".formatted(TABLE_NAME, TABLE_NAME, placeholder);
     }
 
     private void syncEntity(@NotNull final Long id, @NotNull final UrlCheck urlCheck) throws SQLException {
