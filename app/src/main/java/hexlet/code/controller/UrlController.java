@@ -41,7 +41,7 @@ public final class UrlController {
 
         result.ifOkOrElse(
             (url) -> HttpFlash.success("Страница успешно добавлена").saveToSession(context),
-            (error) -> HttpFlash.error(error).saveToSession(context)
+            (error) -> HttpFlash.danger(error).saveToSession(context)
         );
 
         context.redirect(NamedRoutes.urlsPath());

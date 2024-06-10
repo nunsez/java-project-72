@@ -9,7 +9,7 @@ public final class HttpFlash {
     public static final String FLASH = "flash";
 
     @NotNull
-    public static final String FLASH_TYPE = "flash-type";
+    public static final String FLASH_TYPE = "flashType";
 
     public enum Type {
         SUCCESS {
@@ -17,9 +17,9 @@ public final class HttpFlash {
                 return "success";
             }
         },
-        ERROR {
+        DANGER {
             public String toString() {
-                return "error";
+                return "danger";
             }
         };
     }
@@ -39,8 +39,8 @@ public final class HttpFlash {
         return new HttpFlash(message, Type.SUCCESS);
     }
 
-    public static HttpFlash error(@NotNull final String message) {
-        return new HttpFlash(message, Type.ERROR);
+    public static HttpFlash danger(@NotNull final String message) {
+        return new HttpFlash(message, Type.DANGER);
     }
 
     @NotNull
@@ -63,7 +63,7 @@ public final class HttpFlash {
 
         return switch (type) {
             case "success" -> HttpFlash.success(message);
-            case "error" -> HttpFlash.error(message);
+            case "danger" -> HttpFlash.danger(message);
             case null, default -> null;
         };
 

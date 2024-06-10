@@ -26,7 +26,7 @@ public final class UrlCheckController {
 
         result.ifOkOrElse(
             (urlCheck) -> HttpFlash.success("Страница успешно проверена").saveToSession(context),
-            (error) -> HttpFlash.error(error).saveToSession(context)
+            (error) -> HttpFlash.danger(error).saveToSession(context)
         );
 
         context.redirect(NamedRoutes.urlPath(urlId));
