@@ -126,6 +126,10 @@ public final class UrlCheckRepository implements Repository<UrlCheck> {
 
     @NotNull
     public Map<Long, UrlCheck> findLastChecksByUrlIds(@NotNull List<Long> urlIds) throws SQLException {
+        if (urlIds.isEmpty()) {
+            return new HashMap<>();
+        }
+
         var sql = lastCheckSql(urlIds.size());
 
         try (
