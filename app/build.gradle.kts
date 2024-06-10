@@ -27,8 +27,7 @@ java {
 }
 
 jte {
-    binaryStaticContent = true
-    generate()
+    precompile()
 }
 
 dependencies {
@@ -57,7 +56,7 @@ tasks {
 
 tasks.jar {
     dependsOn(tasks.precompileJte)
-    from(fileTree("build/generated-sources/jte")) {
+    from(fileTree("jte-classes")) {
         include("**/*.class")
         include("**/*.bin")
     }
