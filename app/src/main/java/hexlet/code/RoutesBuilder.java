@@ -2,7 +2,6 @@ package hexlet.code;
 
 import hexlet.code.controller.UrlCheckController;
 import hexlet.code.controller.UrlController;
-import hexlet.code.dto.page.Page;
 import hexlet.code.util.HttpFlash;
 import hexlet.code.util.NamedRoutes;
 import io.javalin.Javalin;
