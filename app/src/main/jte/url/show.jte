@@ -20,7 +20,7 @@
             </tr>
             <tr>
                 <td>Дата создания</td>
-                <td>${String.valueOf(url.insertedAt())}</td>
+                <td>${page.formatTimestamp(url.insertedAt())}</td>
             </tr>
         </table>
 
