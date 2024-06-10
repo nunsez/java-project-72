@@ -41,8 +41,7 @@ public final class App {
 
     @NotNull
     public static Javalin getApp() throws IOException, SQLException {
-        var dataSource = getDataSource();
-        initDatabaseSchema(dataSource);
+        initDatabaseSchema(DATA_SOURCE);
 
         var app = Javalin.create(config -> {
             config.bundledPlugins.enableDevLogging();
