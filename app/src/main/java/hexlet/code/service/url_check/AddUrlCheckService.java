@@ -51,8 +51,8 @@ public final class AddUrlCheckService {
 
     @NotNull
     private UrlCheck buildUrlCheck(@NotNull Long urlId, @NotNull Integer statusCode, @NotNull Document doc) {
-        var h1Node = doc.select("h1").first();
-        var descriptionNode = doc.select("head meta[name='description']").first();
+        var h1Node = doc.selectFirst("h1");
+        var descriptionNode = doc.selectFirst("head meta[name='description']");
 
         return new UrlCheck(
             statusCode,
