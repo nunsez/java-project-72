@@ -3,6 +3,7 @@ package hexlet.code.controller;
 import hexlet.code.App;
 import hexlet.code.repository.UrlCheckRepository;
 import hexlet.code.repository.UrlRepository;
+import hexlet.code.service.ServiceException;
 import hexlet.code.service.url_check.AddUrlCheckService;
 import hexlet.code.util.HttpFlash;
 import hexlet.code.util.NamedRoutes;
@@ -22,12 +23,14 @@ public final class UrlCheckController {
 
     public static void create(@NotNull Context context) {
         var urlId = context.pathParamAsClass(URL_PARAM, Long.class).get();
-        var result = new AddUrlCheckService(URL_REPOSITORY, URL_CHECK_REPOSITORY).apply(urlId);
+        var service = new AddUrlCheckService(URL_REPOSITORY, URL_CHECK_REPOSITORY);
 
-        result.ifOkOrElse(
-            (urlCheck) -> HttpFlash.success("Страница успешно проверена").saveToSession(context),
-            (error) -> HttpFlash.danger(error).saveToSession(context)
-        );
+        try {
+            service.call(urlId);
+            HttpFlash.success("Страница успешно проверена").saveToSession(context);
+        } catch (ServiceException e) {
+            HttpFlash.danger(e.getMessage()).saveToSession(context);
+        }
 
         context.redirect(NamedRoutes.urlPath(urlId));
     }

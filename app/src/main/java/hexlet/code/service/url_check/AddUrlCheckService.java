@@ -4,19 +4,15 @@ import hexlet.code.model.Url;
 import hexlet.code.model.UrlCheck;
 import hexlet.code.repository.UrlCheckRepository;
 import hexlet.code.repository.UrlRepository;
-import hexlet.code.util.Result;
-import kong.unirest.core.HttpResponse;
+import hexlet.code.service.ServiceException;
 import kong.unirest.core.Unirest;
 import org.jetbrains.annotations.NotNull;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.sql.SQLException;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Function;
 
-public final class AddUrlCheckService implements Function<Long, Result<UrlCheck, String>> {
+public final class AddUrlCheckService {
 
     @NotNull
     private final UrlRepository urlRepository;
@@ -32,40 +28,23 @@ public final class AddUrlCheckService implements Function<Long, Result<UrlCheck,
         this.urlCheckRepository = urlCheckRepository;
     }
 
-    public Result<UrlCheck, String> apply(@NotNull Long urlId) {
-        var statusCode = new AtomicReference<Integer>();
-
-        return getUrl(urlId)
-            .flatMap(this::getResponse)
-            .flatMap(response -> {
-                statusCode.set(response.getStatus());
-                return parseDoc(response);
-            })
-            .map(doc -> buildUrlCheck(urlId, statusCode.get(), doc))
-            .flatMap(this::save);
-    }
-
-    private Result<Url, String> getUrl(@NotNull Long id) {
-        Optional<Url> url;
-
-        try {
-            url = urlRepository.find(id);
-        } catch (SQLException e) {
-            return Result.error("Ошибка запроса данных");
-        }
-
-        return url.<Result<Url, String>>map(Result::ok)
-            .orElseGet(() -> Result.error("Страница не найдена"));
-    }
-
-    private Result<HttpResponse<String>, String> getResponse(Url url) {
+    public UrlCheck call(@NotNull Long urlId) throws ServiceException {
+        var url = getUrl(urlId);
         var response = Unirest.get(url.name()).asString();
-        return Result.ok(response);
+        var statusCode = response.getStatus();
+        var doc = Jsoup.parse(response.getBody());
+        var urlCheck = buildUrlCheck(urlId, statusCode, doc);
+        save(urlCheck);
+        return urlCheck;
     }
 
-    private Result<Document, String> parseDoc(HttpResponse<String> response) {
-        var doc = Jsoup.parse(response.getBody());
-        return Result.ok(doc);
+    private Url getUrl(@NotNull Long id) throws ServiceException {
+        try {
+            return urlRepository.find(id)
+                .orElseThrow(() -> new ServiceException("Страница не найдена"));
+        } catch (SQLException e) {
+            throw new ServiceException("Ошибка запроса данных");
+        }
     }
 
     private UrlCheck buildUrlCheck(Long urlId, Integer statusCode, Document doc) {
@@ -81,14 +60,12 @@ public final class AddUrlCheckService implements Function<Long, Result<UrlCheck,
         );
     }
 
-    private Result<UrlCheck, String> save(@NotNull UrlCheck urlCheck) {
+    private void save(@NotNull UrlCheck urlCheck) throws ServiceException {
         try {
             urlCheckRepository.save(urlCheck);
         } catch (SQLException e) {
-            return Result.error("Ошибка при добавлении проверки");
+            throw new ServiceException("Ошибка при добавлении проверки");
         }
-
-        return Result.ok(urlCheck);
     }
 
 }
