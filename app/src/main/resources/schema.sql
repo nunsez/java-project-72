@@ -3,14 +3,14 @@ DROP TABLE IF EXISTS url_checks;
 DROP TABLE IF EXISTS urls;
 
 CREATE TABLE urls (
-    id BIGSERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY NOT NULL,
     name VARCHAR(255),
     created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE url_checks (
-    id BIGSERIAL PRIMARY KEY,
-    status_code INT,
+    id BIGSERIAL PRIMARY KEY NOT NULL,
+    status_code INT NOT NULL,
     title VARCHAR(255),
     h1 VARCHAR(255),
     description TEXT,
@@ -18,5 +18,5 @@ CREATE TABLE url_checks (
     created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX idx_inserted_a
+CREATE INDEX idx_created_at
 ON url_checks (created_at);
