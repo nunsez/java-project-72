@@ -54,7 +54,9 @@ public final class AddUrlService {
             .append(url.getHost());
 
         if (url.getPort() > 0) {
-            builder.append(url.getPort());
+            builder
+                .append(":")
+                .append(url.getPort());
         }
 
         return builder.toString();

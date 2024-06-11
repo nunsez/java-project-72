@@ -30,7 +30,7 @@ class UrlControllerTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"http://example.com"})
+    @ValueSource(strings = {"http://example.com", "http://localhost:47945"})
     public void createOk(String input) {
         var body = "url=" + input;
 
