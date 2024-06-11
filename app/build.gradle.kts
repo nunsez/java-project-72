@@ -87,3 +87,17 @@ tasks.jacocoTestReport {
         csv.required = false
     }
 }
+
+// special for hexlet checks, I love you!
+tasks.register("removeDotGradle") {
+    doLast {
+        val dotGradleDir = File("$projectDir/.gradle")
+        dotGradleDir.deleteRecursively()
+    }
+}
+tasks.compileTestJava {
+    if (System.getenv("HOME").equals("/root")) {
+        dependsOn(":removeDotGradle")
+    }
+}
+// end of love
