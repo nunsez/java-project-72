@@ -9,6 +9,8 @@ import hexlet.code.util.HttpFlash;
 import hexlet.code.util.NamedRoutes;
 import io.javalin.http.Context;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class UrlCheckController {
 
@@ -21,14 +23,21 @@ public final class UrlCheckController {
     @NotNull
     private static final UrlCheckRepository URL_CHECK_REPOSITORY = new UrlCheckRepository(App.DATA_SOURCE);
 
+    @NotNull
+    private static final Logger LOGGER = LoggerFactory.getLogger(UrlCheckController.class);
+
     public static void create(@NotNull Context context) {
         var urlId = context.pathParamAsClass(URL_PARAM, Long.class).get();
+        LOGGER.atDebug().log("create param urlId: {}", urlId);
+
         var service = new AddUrlCheckService(URL_REPOSITORY, URL_CHECK_REPOSITORY);
 
         try {
-            service.call(urlId);
+            var urlCheck = service.call(urlId);
+            LOGGER.atInfo().log("Created UrlCheck: {} {}", urlCheck.id(), urlCheck.title());
             HttpFlash.success("Страница успешно проверена").saveToSession(context);
         } catch (ServiceException e) {
+            LOGGER.atError().log("ServiceException: {}", e.getMessage());
             HttpFlash.danger(e.getMessage()).saveToSession(context);
         }
 

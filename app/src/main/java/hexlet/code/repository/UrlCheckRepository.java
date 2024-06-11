@@ -2,6 +2,8 @@ package hexlet.code.repository;
 
 import hexlet.code.model.UrlCheck;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
@@ -22,6 +24,9 @@ public final class UrlCheckRepository implements Repository<UrlCheck> {
     @NotNull
     public static final String TABLE_NAME = "url_checks";
 
+    @NotNull
+    private static final Logger LOGGER = LoggerFactory.getLogger(UrlCheckRepository.class);
+
     public UrlCheckRepository(@NotNull DataSource dataSource) {
         this.dataSource = dataSource;
     }
@@ -36,6 +41,7 @@ public final class UrlCheckRepository implements Repository<UrlCheck> {
             var statement = connection.prepareStatement(sql)
         ) {
             statement.setLong(1, id);
+            LOGGER.atDebug().log(statement.toString());
             var resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
@@ -89,6 +95,7 @@ public final class UrlCheckRepository implements Repository<UrlCheck> {
             statement.setString(3, entity.h1());
             statement.setString(4, entity.description());
             statement.setLong(5, entity.urlId());
+            LOGGER.atDebug().log(statement.toString());
             statement.executeUpdate();
             var generatedKeys = statement.getGeneratedKeys();
 
@@ -112,6 +119,7 @@ public final class UrlCheckRepository implements Repository<UrlCheck> {
             var statement = connection.prepareStatement(sql)
         ) {
             statement.setLong(1, urlId);
+            LOGGER.atDebug().log(statement.toString());
             var resultSet = statement.executeQuery();
             var entities = new ArrayList<UrlCheck>();
 
@@ -142,6 +150,7 @@ public final class UrlCheckRepository implements Repository<UrlCheck> {
                 index += 1;
             }
 
+            LOGGER.atDebug().log(statement.toString());
             var resultSet = statement.executeQuery();
             var entities = new HashMap<Long, UrlCheck>();
 

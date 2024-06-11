@@ -3,6 +3,8 @@ package hexlet.code.repository;
 import hexlet.code.model.Url;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
@@ -20,6 +22,9 @@ public final class UrlRepository implements Repository<Url> {
     @NotNull
     public static final String TABLE_NAME = "urls";
 
+    @NotNull
+    private static final Logger LOGGER = LoggerFactory.getLogger(UrlRepository.class);
+
     public UrlRepository(@NotNull DataSource dataSource) {
         this.dataSource = dataSource;
     }
@@ -34,6 +39,7 @@ public final class UrlRepository implements Repository<Url> {
             var statement = connection.prepareStatement(sql)
         ) {
             statement.setLong(1, id);
+            LOGGER.atDebug().log(statement.toString());
             var resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
@@ -80,6 +86,7 @@ public final class UrlRepository implements Repository<Url> {
             var statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)
         ) {
             statement.setString(1, entity.name());
+            LOGGER.atDebug().log(statement.toString());
             statement.executeUpdate();
             var generatedKeys = statement.getGeneratedKeys();
 
@@ -103,6 +110,7 @@ public final class UrlRepository implements Repository<Url> {
             var statement = connection.prepareStatement(sql)
         ) {
             statement.setString(1, name);
+            LOGGER.atDebug().log(statement.toString());
             var resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
